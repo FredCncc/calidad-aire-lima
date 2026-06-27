@@ -1,6 +1,6 @@
 import streamlit as st
 import base64
-import pyodbc
+import sqlite3
 import re  # Librería nativa de Python para validar correos
 import hashlib
 from streamlit_option_menu import option_menu  # Requrequiere: pip install streamlit-option-menu
@@ -20,33 +20,43 @@ def es_correo_valido(correo):
     return re.match(patron, correo) is not None
 
 # --- CONEXIÓN A BASE DE DATOS ---
-def ejecutar_consulta(query, params=(), registrar=False):
-    nombre_servidor = "FREDCNCC\\SQLEXPRESS"  
-    base_datos = "DM_CalidadAire_Lima"
-   
-    # Usamos TrustServerCertificate=yes por seguridad de la red del laboratorio
-    conexion_str = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={nombre_servidor};DATABASE={base_datos};Trusted_Connection=yes;TrustServerCertificate=yes;"
-   
+def ejecutar_consulta(query, datos=None, registrar=False):
+    # Esto crea automáticamente el archivo de la base de datos si no existe
+    conexion = sqlite3.connect("usuarios.db")
+    cursor = conexion.cursor()
+    
+    # Crea la tabla de usuarios automáticamente si es la primera vez que corre
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        correo TEXT UNIQUE,
+        usuario TEXT UNIQUE,
+        clave TEXT
+    )
+    """)
+    conexion.commit()
+    
     try:
-        conn = pyodbc.connect(conexion_str)
-        cursor = conn.cursor()
-        cursor.execute(query, params)
-       
-        if registrar:
-            conn.commit()
-            resultado = True
+        if datos:
+            cursor.execute(query, datos)
         else:
-            resultado = cursor.fetchall()
-           
-        cursor.close()
-        conn.close()
-        return resultado
-       
-    except Exception as error_db:
-        print(f"Error detectado en la base de datos: {error_db}")
-        if "23000" in str(error_db):
-            return "duplicado"
+            cursor.execute(query)
+            
+        if registrar:
+            conexion.commit()
+            return True
+        else:
+            return cursor.fetchall()
+            
+    except sqlite3.IntegrityError:
+        # Esto maneja de forma automática los usuarios o correos duplicados
+        return "duplicado"
+    except Exception as e:
+        print(f"Error: {e}")
         return False
+    finally:
+        conexion.close()
+
 
 # --- FUNCIÓN PARA EL VIDEO EN BASE64 ---
 def obtener_video_base64(ruta_video):
