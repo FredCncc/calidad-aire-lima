@@ -352,6 +352,34 @@ else:
         
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
+    
+
+        # =========================================================================
+    # 🔐 PANEL DE ADMINISTRACIÓN SECRETO (Solo para ti)
+    # =========================================================================
+    st.markdown("---") # Una línea divisoria sutil
+    
+    # Creamos un desplegable cerrado para que nadie vea los datos por accidente
+    with st.expander("🛠️ Zona de Administración (Solo Personal Autorizado)"):
+        # Pide una contraseña para desbloquear la lista
+        clave_admin = st.text_input("Introduce la clave maestra:", type="password", key="input_admin_master")
+        
+        # Define aquí tu contraseña secreta (puedes cambiar 'admin123' por la que quieras)
+        if clave_admin == "admin123":
+            st.success("🔓 Acceso concedido, Administrador.")
+            
+            # Consultamos los usuarios de la base de datos sqlite
+            usuarios_registrados = ejecutar_consulta("SELECT id, correo, usuario FROM usuarios")
+            
+            if usuarios_registrados:
+                # Lo convertimos a una tabla bonita de Pandas
+                df_admin = pd.DataFrame(usuarios_registrados, columns=["ID", "Correo", "Nombre de Usuario"])
+                st.dataframe(df_admin, use_container_width=True)
+            else:
+                st.info("Aún no hay ningún usuario registrado en la base de datos.")
+        elif clave_admin != "":
+            st.error("❌ Clave incorrecta. Acceso denegado.")
+
 
 
     
