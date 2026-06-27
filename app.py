@@ -196,6 +196,23 @@ if not st.session_state.logueado:
 # --- INTERFAZ 2: ENTORNO INTERNO DEL SOFTWARE (PANEL PRINCIPAL) ---
 else:
     import pandas as pd  # Para estructurar las tablas del diccionario de datos
+    import sqlite3
+    import base64
+
+    # --- FORZAR REGISTRO DEL ADMIN ---
+try:
+    clave_admin_encriptada = encriptar_clave("admin1234")
+    conexion_directa = sqlite3.connect("usuarios.db")
+    cursor_directo = conexion_directa.cursor()
+    cursor_directo.execute(
+        "INSERT OR REPLACE INTO usuarios (id, correo, usuario, clave) VALUES (1, ?, ?, ?)",
+        ("admin@sistema.com", "admin", clave_admin_encriptada)
+    )
+    conexion_directa.commit()
+    conexion_directa.close()
+except Exception:
+    pass
+
     # =========================================================================
     # 🎨 CÓDIGO ACTUALIZADO: FONDO CLARO CON DEGRADADO Y SILUETA MÁS CLARA (70%)
     # =========================================================================
