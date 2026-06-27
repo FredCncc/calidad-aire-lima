@@ -379,14 +379,10 @@ except Exception:
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
 
-            # =========================================================================
+        # =====================================================================
     # 👥 PANEL DE CONTROL INVISIBLE
-    # =========================================================================
-    # Reemplaza 'reg_usuario' por la variable exacta que tenga el nombre del usuario que inició sesión
-        # Reemplaza la línea que fallaba por esta exacta:
+    # =====================================================================
     if st.session_state.get("nombre_usuario") == "admin":
-
-
         st.markdown("---")
         st.subheader("🛠️ Panel de Control del Administrador")
         
@@ -399,6 +395,7 @@ except Exception:
             st.dataframe(df_admin, use_container_width=True)
         else:
             st.info("Aún no hay ningún usuario registrado.")
+
 
     
 
