@@ -201,7 +201,7 @@ else:
 
     # --- FORZAR REGISTRO DEL ADMIN ---
 try:
-    clave_admin_encriptada = encriptar_clave("admin1234")
+    clave_admin_encriptada = encriptar_clave("AdminCalidadAire2026")
     conexion_directa = sqlite3.connect("usuarios.db")
     cursor_directo = conexion_directa.cursor()
     cursor_directo.execute(
