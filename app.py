@@ -35,6 +35,15 @@ def ejecutar_consulta(query, datos=None, registrar=False):
     )
     """)
     conexion.commit()
+    try:
+        cursor.execute(
+            "INSERT OR IGNORE INTO usuarios (correo, usuario, clave) VALUES (?, ?, ?)",
+            ("admin@sistema.com", "admin", "admin1234")
+        )
+        conexion.commit()
+    except Exception as e:
+        pass
+
     
     try:
         if datos:
@@ -352,33 +361,32 @@ else:
         
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
+
+            # =========================================================================
+    # 👥 PANEL DE CONTROL INVISIBLE
+    # =========================================================================
+    # Reemplaza 'reg_usuario' por la variable exacta que tenga el nombre del usuario que inició sesión
+        # Reemplaza la línea que fallaba por esta exacta:
+    if st.session_state.get("nombre_usuario") == "admin":
+
+
+        st.markdown("---")
+        st.subheader("🛠️ Panel de Control del Administrador")
+        
+        # Leemos todos los registros de la base de datos SQLite
+        usuarios_registrados = ejecutar_consulta("SELECT id, correo, usuario FROM usuarios")
+        
+        if usuarios_registrados:
+            # Mostramos la lista completa en una tabla limpia de Pandas
+            df_admin = pd.DataFrame(usuarios_registrados, columns=["ID", "Correo", "Nombre de Usuario"])
+            st.dataframe(df_admin, use_container_width=True)
+        else:
+            st.info("Aún no hay ningún usuario registrado.")
+
     
 
-        # =========================================================================
-    # 🔐 PANEL DE ADMINISTRACIÓN SECRETO (Solo para ti)
-    # =========================================================================
-    st.markdown("---") # Una línea divisoria sutil
+            
     
-    # Creamos un desplegable cerrado para que nadie vea los datos por accidente
-    with st.expander("🛠️ Zona de Administración (Solo Personal Autorizado)"):
-        # Pide una contraseña para desbloquear la lista
-        clave_admin = st.text_input("Introduce la clave maestra:", type="password", key="input_admin_master")
-        
-        # Define aquí tu contraseña secreta (puedes cambiar 'admin123' por la que quieras)
-        if clave_admin == "admin123":
-            st.success("🔓 Acceso concedido, Administrador.")
-            
-            # Consultamos los usuarios de la base de datos sqlite
-            usuarios_registrados = ejecutar_consulta("SELECT id, correo, usuario FROM usuarios")
-            
-            if usuarios_registrados:
-                # Lo convertimos a una tabla bonita de Pandas
-                df_admin = pd.DataFrame(usuarios_registrados, columns=["ID", "Correo", "Nombre de Usuario"])
-                st.dataframe(df_admin, use_container_width=True)
-            else:
-                st.info("Aún no hay ningún usuario registrado en la base de datos.")
-        elif clave_admin != "":
-            st.error("❌ Clave incorrecta. Acceso denegado.")
 
 
 
