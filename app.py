@@ -200,18 +200,21 @@ else:
     import base64
 
     # --- FORZAR REGISTRO DEL ADMIN ---
-try:
-    clave_admin_encriptada = encriptar_clave("AdminCalidadAire2026")
-    conexion_directa = sqlite3.connect("usuarios.db")
-    cursor_directo = conexion_directa.cursor()
-    cursor_directo.execute(
-        "INSERT OR REPLACE INTO usuarios (id, correo, usuario, clave) VALUES (1, ?, ?, ?)",
-        ("admin@sistema.com", "admin", clave_admin_encriptada)
-    )
-    conexion_directa.commit()
-    conexion_directa.close()
-except Exception:
-    pass
+    # --- FORZAR REGISTRO DEL ADMIN (CORREGIDO Y ENCRIPTADO) ---
+    try:
+        # Encriptamos la clave primero para que coincida con el sistema de login
+        clave_admin_encriptada = encriptar_clave("AdminCalidadAire2026")
+        
+        conexion_directa = sqlite3.connect("usuarios.db")
+        cursor_directo = conexion_directa.cursor()
+        cursor_directo.execute(
+            "INSERT OR REPLACE INTO usuarios (id, correo, usuario, clave) VALUES (1, ?, ?, ?)",
+            ("admin@sistema.com", "admin", clave_admin_encriptada)
+        )
+        conexion_directa.commit()
+        conexion_directa.close()
+    except Exception as e:
+        pass
 
     # =========================================================================
     # 🎨 CÓDIGO ACTUALIZADO: FONDO CLARO CON DEGRADADO Y SILUETA MÁS CLARA (70%)
@@ -379,7 +382,7 @@ except Exception:
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
 
-        # =====================================================================
+    # =====================================================================
     # 👥 PANEL DE CONTROL INVISIBLE
     # =====================================================================
     if st.session_state.get("nombre_usuario") == "admin":
