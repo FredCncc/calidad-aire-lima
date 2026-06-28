@@ -68,6 +68,7 @@ def ejecutar_consulta(query, datos=None, registrar=False):
 
 
 # --- FUNCIÓN PARA EL VIDEO EN BASE64 ---
+@st.cache_resource
 def obtener_video_base64(ruta_video):
     with open(ruta_video, "rb") as video_file:
         datos = video_file.read()
@@ -199,7 +200,6 @@ else:
     import sqlite3
     import base64
 
-    # --- FORZAR REGISTRO DEL ADMIN ---
     # --- FORZAR REGISTRO DEL ADMIN (CORREGIDO Y ENCRIPTADO) ---
     try:
         # Encriptamos la clave primero para que coincida con el sistema de login
