@@ -329,31 +329,32 @@ else:
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
             menu_icon="cast",
             default_index=0,
-            # 🎨 ESTILOS INTEGRADOS: EFECTO PLOMO MINIMALISTA COMO EL BOTÓN DE CERRAR SESIÓN
+                       # 🎨 ESTILOS COMPACTOS Y PROFESIONALES
             styles={
                 "container": {
-                    "padding": "5px 0px", 
+                    "padding": "2px 0px",            # <-- Reduce el margen del contenedor general
                     "background-color": "transparent"
                 },
                 "nav-link": {
-                    "font-size": "14px", 
+                    "font-size": "13px",             # <-- Bajamos de 14px a 13px para ganar espacio de lectura
                     "text-align": "left", 
-                    "margin": "6px 0px",            # <-- Separa sutilmente los botones verticalmente
-                    "border-radius": "6px",          # <-- Bordes redondeados limpios
-                    "transition": "background-color 0.2s ease", # <-- Transición rápida y suave de color
-                    "background-color": "transparent", # <-- Botones transparentes por defecto
-                    "color": "#1f2937"               # <-- Texto oscuro legible
+                    "margin": "3px 0px",             # <-- Reducimos la separación de 6px a 3px para que entren todos en pantalla
+                    "border-radius": "6px",          
+                    "transition": "background-color 0.2s ease", 
+                    "background-color": "transparent", 
+                    "color": "#1f2937"               
                 },
                 "nav-link-hover": {
-                    "background-color": "#031e41",   # <-- CAMBIA A PLOMO/GRIS CLARO AL PASAR EL MOUSE (Igual a Cerrar Sesión)
-                    "color": "#0f172a"               # <-- Oscurece un poco el texto al pasar el puntero
+                    "background-color": "#e2e8f0",   # <-- Tu efecto plomo idéntico al botón de cerrar sesión
+                    "color": "#0f172a"               
                 },
                 "nav-link-selected": {
-                    "background-color": "#66d935",   # <-- Mantiene tu color verde original solo para el botón activo
+                    "background-color": "#66d935",   # <-- Tu hermoso color verde actual activo
                     "color": "#ffffff", 
                     "font-weight": "bold"
                 }
             }
+
         )
         
         st.divider()
