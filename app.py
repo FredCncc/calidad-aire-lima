@@ -329,29 +329,34 @@ else:
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
             menu_icon="cast",
             default_index=0,
-                       # 🎨 ESTILOS COMPACTOS Y PROFESIONALES
+            # 🎨 ESTILOS PREMIUM CON CONTRASTE Y TARJETAS BLANCAS REALES
             styles={
                 "container": {
-                    "padding": "2px 0px",            # <-- Reduce el margen del contenedor general
-                    "background-color": "transparent"
+                    "padding": "5px 0px", 
+                    "background-color": "transparent" # Deja que actúe el fondo base
                 },
                 "nav-link": {
-                    "font-size": "13px",             # <-- Bajamos de 14px a 13px para ganar espacio de lectura
+                    "font-size": "13px", 
                     "text-align": "left", 
-                    "margin": "3px 0px",             # <-- Reducimos la separación de 6px a 3px para que entren todos en pantalla
-                    "border-radius": "6px",          
-                    "transition": "background-color 0.2s ease", 
-                    "background-color": "transparent", 
-                    "color": "#1f2937"               
+                    "margin": "6px 0px",              # <-- Separación física real entre botones
+                    "border-radius": "8px",            # <-- Bordes redondeados más visibles
+                    "background-color": "#ffffff",     # <-- FONDO BLANCO FIJO para que resalte sobre el fondo gris de la barra lateral
+                    "color": "#1e293b",                # <-- Texto oscuro legible
+                    "border": "1px solid #e2e8f0",     # <-- BORDE GRIS CLARO para darle volumen al botón
+                    "box-shadow": "0px 2px 4px rgba(0,0,0,0.05)", # <-- SOMBRA REAL sutil para que parezcan tarjetas flotantes
+                    "transition": "all 0.2s ease"      # <-- Animación fluida para el mouse
                 },
                 "nav-link-hover": {
-                    "background-color": "#e2e8f0",   # <-- Tu efecto plomo idéntico al botón de cerrar sesión
-                    "color": "#0f172a"               
+                    "background-color": "#cbd5e1",     # <-- PLOMO MÁS OSCURO al pasar el mouse para que se note el cambio de estado
+                    "color": "#0f172a",
+                    "border": "1px solid #94a3b8"      # <-- El borde también se oscurece al pasar el puntero
                 },
                 "nav-link-selected": {
-                    "background-color": "#66d935",   # <-- Tu hermoso color verde actual activo
+                    "background-color": "#66d935",     # <-- Tu color verde cuando está activo
                     "color": "#ffffff", 
-                    "font-weight": "bold"
+                    "font-weight": "bold",
+                    "border": "1px solid #4ed01b",
+                    "box-shadow": "0px 4px 10px rgba(102, 217, 53, 0.3)" # <-- Sombra verde al estar seleccionado
                 }
             }
 
