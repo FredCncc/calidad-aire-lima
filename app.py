@@ -216,41 +216,53 @@ else:
     except Exception as e:
         pass
 
-   #------------------------------------------------------------------
+   # BLOQUE DEL COLOR DE FONDO DE PERU.SVG
     else:
         import pandas as pd
         import sqlite3
         import base64
-    
-    # --- FORZAR REGISTRO DEL ADMIN (Tu lógica se mantiene igual) ---
-    # ... (deja tu bloque try-except del admin como está) ...
 
-    # 🎨 CSS MEJORADO: CONTRASTE CORRECTO Y MARCA DE AGUA AL 8%
+        # 🎨 CONFIGURACIÓN DE INTERFAZ PREMIUM (ESTILO AQI.IN)
         ruta_del_svg = "assets/peru.svg"
+        
         try:
             svg_codificado = obtener_imagen_base64(ruta_del_svg)
             estilos_fondo_sistema = f"""
             <style>
-            /* Fondo principal claro y limpio */
-            .stApp {{
-                background-color: #f8fafc !important;
+            /* 1. Fondo base con degradado suave crema/arena idéntico al de AQI.in */
+            .stApp {{ 
+                background: linear-gradient(180deg, #fdfbf7 0%, #f7f3eb 100%) !important;
             }}
-            /* Reducimos la opacidad al 8% para que sea una marca de agua real y no sature */
+            
+            /* 2. Silueta de Perú fijada perfectamente en la parte inferior del fondo */
             .stApp::before {{
-                content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                content: ""; 
+                position: fixed; 
+                bottom: 0; 
+                left: 0; 
+                width: 100%; 
+                height: 300px; /* Controla la altura de la silueta en la pantalla */
                 background-image: url("data:image/svg+xml;base64,{svg_codificado}");
-                background-repeat: no-repeat; background-position: center 75%; background-size: 85% auto;
-                opacity: 0.08; pointer-events: none; z-index: 0;
+                background-repeat: no-repeat; 
+                background-position: center bottom; 
+                background-size: contain; /* Ajusta la silueta horizontalmente de forma limpia */
+                opacity: 0.15; /* Opacidad sutil estilo marca de agua para que no sature tus reportes */
+                pointer-events: none; 
+                z-index: 0;
             }}
-            /* IMPORTANTE: Cambia el color SOLO a los textos del contenedor principal, no al sidebar */
-            [data-testid="stMainBlockContainer"] h1, 
-            [data-testid="stMainBlockContainer"] h2, 
-            [data-testid="stMainBlockContainer"] h3, 
-            [data-testid="stMainBlockContainer"] h5, 
-            [data-testid="stMainBlockContainer"] p, 
-            [data-testid="stMainBlockContainer"] span, 
+            
+            /* 3. Estilos de texto oscuros para máxima lectura sobre el fondo claro */
+            [data-testid="stMainBlockContainer"] h1,
+            [data-testid="stMainBlockContainer"] h2,
+            [data-testid="stMainBlockContainer"] h3,
+            [data-testid="stMainBlockContainer"] h4,
+            [data-testid="stMainBlockContainer"] h5,
+            [data-testid="stMainBlockContainer"] p,
+            [data-testid="stMainBlockContainer"] span,
             [data-testid="stMainBlockContainer"] label {{
-                color: #0f172a !important; /* Azul medianoche ultra legible */
+                color: #1e293b !important; /* Gris azulado oscuro muy legible */
+                position: relative; 
+                z-index: 1;
             }}
             </style>
             """
