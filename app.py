@@ -161,7 +161,7 @@ if not st.session_state.logueado:
            
             if usuario_encontrado:
                 st.session_state.logueado = True
-                st.session_state.nombre_usuario = usuario_encontrado[0][0]
+                st.session_state.nombre_usuario = usuario_login
                 st.rerun()
             else:
                 st.error("❌ Usuario, correo o contraseña incorrectos.")
@@ -382,22 +382,7 @@ else:
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
 
-    # =====================================================================
-    # 👥 PANEL DE CONTROL INVISIBLE
-    # =====================================================================
-    if st.session_state.get("nombre_usuario") == "admin":
-        st.markdown("---")
-        st.subheader("🛠️ Panel de Control del Administrador")
-        
-        # Leemos todos los registros de la base de datos SQLite
-        usuarios_registrados = ejecutar_consulta("SELECT id, correo, usuario FROM usuarios")
-        
-        if usuarios_registrados:
-            # Mostramos la lista completa en una tabla limpia de Pandas
-            df_admin = pd.DataFrame(usuarios_registrados, columns=["ID", "Correo", "Nombre de Usuario"])
-            st.dataframe(df_admin, use_container_width=True)
-        else:
-            st.info("Aún no hay ningún usuario registrado.")
+   
 
 
     
