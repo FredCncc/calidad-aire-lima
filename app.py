@@ -329,8 +329,31 @@ else:
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
             menu_icon="cast",
             default_index=0,
+            # 🎨 ESTILOS MEJORADOS: SEPARACIÓN Y EFECTO DE SOMBRA INTERACTIVA
             styles={
-                "nav-link-selected": {"background-color": "#66d935"},
+                "container": {
+                    "padding": "5px 0px", 
+                    "background-color": "transparent"
+                },
+                "nav-link": {
+                    "font-size": "14px", 
+                    "text-align": "left", 
+                    "margin": "8px 0px",            # <-- SEPARA LOS BOTONES VERTICALMENTE (8 píxeles de espacio)
+                    "border-radius": "8px",          # <-- Bordes redondeados modernos para cada botón
+                    "transition": "all 0.3s ease",   # <-- Animación suave de 0.3 segundos para los efectos del mouse
+                    "background-color": "#ffffff"    # <-- Fondo base blanco para que se note la separación
+                },
+                "nav-link-hover": {
+                    "background-color": "#f1f5f9",   # <-- Color de fondo sutil al pasar el mouse
+                    "box-shadow": "0px 8px 16px rgba(102, 217, 53, 0.25)", # <-- EFECTO SOMBRA DE GLOW VERDE (Combina con tu color de selección)
+                    "transform": "translateY(-1px)"  # <-- Efecto flotante (sube un milímetro al poner el puntero)
+                },
+                "nav-link-selected": {
+                    "background-color": "#66d935",   # <-- Tu color verde original para el botón seleccionado
+                    "color": "#ffffff",              # <-- Texto blanco cuando está activo
+                    "font-weight": "bold",
+                    "box-shadow": "0px 4px 12px rgba(102, 217, 53, 0.4)" # <-- Sombra estática para el botón seleccionado
+                }
             }
         )
         
