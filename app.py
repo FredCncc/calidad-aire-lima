@@ -216,50 +216,48 @@ else:
     except Exception as e:
         pass
 
-    # =========================================================================
-    # 🎨 CÓDIGO ACTUALIZADO: FONDO CLARO CON DEGRADADO Y SILUETA MÁS CLARA (70%)
-    # =========================================================================
-    ruta_del_svg = "assets/peru.svg"
-    try:
-        svg_codificado = obtener_imagen_base64(ruta_del_svg)
-        estilos_fondo_sistema = f"""
-        <style>
-        /* 1. Fondo claro con un degradado verde muy suave como el de la web */
-        .stApp {{
-            background: linear-gradient(180deg, #eef7f2 0%, #f4f9f6 100%) !important;
-        }}
+   #------------------------------------------------------------------
+    else:
+        import pandas as pd
+        import sqlite3
+        import base64
+    
+    # --- FORZAR REGISTRO DEL ADMIN (Tu lógica se mantiene igual) ---
+    # ... (deja tu bloque try-except del admin como está) ...
 
-        /* 2. Pseudo-elemento para la silueta con un 70% de opacidad (más clara) */
-        .stApp::before {{
-            content: "";
-            position: absolute;
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background-image: url("data:image/svg+xml;base64,{svg_codificado}");
-            background-repeat: no-repeat;
-            background-position: center 75%; /* Ajusta la posición vertical */
-            background-size: 85% auto;        /* Ajusta el tamaño de la silueta */
-            opacity: 0.70;                    /* 70% de opacidad como indica el código inspeccionado */
-            pointer-events: none;             /* No interfiere con botones */
-            z-index: 0;
-        }}
+    # 🎨 CSS MEJORADO: CONTRASTE CORRECTO Y MARCA DE AGUA AL 8%
+        ruta_del_svg = "assets/peru.svg"
+        try:
+            svg_codificado = obtener_imagen_base64(ruta_del_svg)
+            estilos_fondo_sistema = f"""
+            <style>
+            /* Fondo principal claro y limpio */
+            .stApp {{
+                background-color: #f8fafc !important;
+            }}
+            /* Reducimos la opacidad al 8% para que sea una marca de agua real y no sature */
+            .stApp::before {{
+                content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                background-image: url("data:image/svg+xml;base64,{svg_codificado}");
+                background-repeat: no-repeat; background-position: center 75%; background-size: 85% auto;
+                opacity: 0.08; pointer-events: none; z-index: 0;
+            }}
+            /* IMPORTANTE: Cambia el color SOLO a los textos del contenedor principal, no al sidebar */
+            [data-testid="stMainBlockContainer"] h1, 
+            [data-testid="stMainBlockContainer"] h2, 
+            [data-testid="stMainBlockContainer"] h3, 
+            [data-testid="stMainBlockContainer"] h5, 
+            [data-testid="stMainBlockContainer"] p, 
+            [data-testid="stMainBlockContainer"] span, 
+            [data-testid="stMainBlockContainer"] label {{
+                color: #0f172a !important; /* Azul medianoche ultra legible */
+            }}
+            </style>
+            """
+            st.markdown(estilos_fondo_sistema, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.warning("⚠️ No se encontró la silueta en assets/peru.svg.")
 
-        /* 3. Como el fondo ahora es claro, los textos deben ser oscuros para que se lean bien */
-        h1, h2, h3, h4, h5, p, span, label, div[data-testid="stMarkdownContainer"] {{
-            color: #1f2937 !important; /* Gris oscuro/negro elegante */
-        }}
-        
-        /* 4. Mantiene los textos dentro de los inputs legibles */
-        input {{
-            color: #1f2937 !important;
-        }}
-        </style>
-        """
-        st.markdown(estilos_fondo_sistema, unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("⚠️ No se encontró la silueta en assets/peru.svg.")
     # =========================================================================
 
     # 🌟 DEFINICIÓN DE LAS FUNCIONES MÓDULO (Tu código continúa exactamente igual desde aquí...)
