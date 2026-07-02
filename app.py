@@ -309,12 +309,22 @@ else:
             menu_title="Menú General",
             options=[
                 "Panel General",
+                # --- FASE 1: DATA CORE ORIGINAL ---
                 "1. Dashboard Espacial",
                 "2. Dashboard Temporal",
                 "3. Dashboard Horario",
                 "4. Auditoria DataMart",
+                 # --- UTILITARIOS DE LA PRIMERA OPEN DATA---
                 "5. Descargar Open Data",
                 "6. Diccionario de datos"
+                # --- FASE 2: BIG DATA & MACHINE LEARNING (OPENMETEO) ---
+                "1. Monitoreo Geográfico (OpenMeteo)",
+                "2. Análisis Estacional y Flujos",
+                "3. Análisis Horario y Tráfico",
+                "4. Nivel Relacional (Pearson)",
+                "5. Nivel Explicativo (Causalidad)",
+                "5. Nivel Predictivo (BigQuery ML)",
+
             ],
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
             menu_icon="cast",
@@ -379,6 +389,44 @@ else:
         
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
+        # =====================================================================
+        # 🔬 CONTROL DE VISTAS PARA LA FASE 2 (OPENMETEO & DATA SCIENCE)
+        # =====================================================================
+    elif opcion_modulo == "1. Monitoreo Geográfico (OpenMeteo)":
+        st.markdown("### 📍 FASE 2: MONITOREO GEOGRÁFICO Y ESTADO ACTUAL")
+        # Pon aquí tu enlace de Looker de la Página 1 de tu nueva tarea:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/wej2F", height=720)
+
+    elif opcion_modulo == "2. Análisis Estacional y Flujos":
+        st.markdown("### 📈 FASE 2: ANÁLISIS ESTACIONAL Y FLUJOS (SANKEY)")
+        # Pon aquí tu enlace de Looker de la Página 2 de tu nueva tarea:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/p_n470liy44d", height=720)
+
+    elif opcion_modulo == "3. Análisis Horario y Tráfico":
+        st.markdown("### ⏰ FASE 2: ANÁLISIS HORARIO Y PATRONES DE TRÁFICO")
+        # Pon aquí tu enlace de Looker de la Página 3 de tu nueva tarea:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/p_02gfqv444d", height=720)
+
+    elif opcion_modulo == "4. Nivel Relacional (Pearson)":
+        st.markdown("### 🔗 FASE 2: NIVEL RELACIONAL - IMPACTO GEOGRÁFICO")
+        # Pon aquí tu enlace de Looker del Gráfico de Dispersión de Pearson:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/2ab73939-0c03-4fdc-a716-46208631bc1b/page/tEnnC", height=720)
+
+    elif opcion_modulo == "5. Nivel Explicativo (Causalidad)":
+        st.markdown("### 🔍 FASE 2: NIVEL EXPLICATIVO - CAUSA Y EFECTO")
+        # Pon aquí tu enlace de Looker de la Regresión Logística (Barras Azules/Naranjas):
+        st.iframe(src="https://datastudio.google.com/embed/reporting/4f4b1b41-be94-43d3-a138-9254f9320496/page/tEnnC", height=720)
+
+    elif opcion_modulo == "6. Nivel Predictivo (BigQuery ML)":
+        st.markdown("### 🔮 FASE 2: NIVEL PREDICTIVO - MACHINE LEARNING ARIMA_PLUS")
+        # Pon aquí tu enlace de Looker del Pronóstico con Bandas de Error:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/5eb59328-b988-4560-8a7f-c8a943f78cba/page/tEnnC", height=720)
+
+    
+    
+
+
+    
 
    
 
