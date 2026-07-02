@@ -233,7 +233,7 @@ else:
             <style>
             /* Fondo principal claro y limpio */
             .stApp {{
-                background-color: #f8fafc !important;
+                background-color: #647a4e !important;
             }}
             /* Reducimos la opacidad al 8% para que sea una marca de agua real y no sature */
             .stApp::before {{
