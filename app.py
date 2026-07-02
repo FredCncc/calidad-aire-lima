@@ -323,7 +323,7 @@ else:
                 "3. Análisis Horario y Tráfico",
                 "4. Nivel Relacional (Pearson)",
                 "5. Nivel Explicativo (Causalidad)",
-                "5. Nivel Predictivo (BigQuery ML)",
+                "6. Nivel Predictivo (BigQuery ML)",
 
             ],
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
