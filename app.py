@@ -345,7 +345,7 @@ else:
                     "color": "#1f2937"               # <-- Texto oscuro legible
                 },
                 "nav-link-hover": {
-                    "background-color": "#e2e8f0",   # <-- CAMBIA A PLOMO/GRIS CLARO AL PASAR EL MOUSE (Igual a Cerrar Sesión)
+                    "background-color": "#031e41",   # <-- CAMBIA A PLOMO/GRIS CLARO AL PASAR EL MOUSE (Igual a Cerrar Sesión)
                     "color": "#0f172a"               # <-- Oscurece un poco el texto al pasar el puntero
                 },
                 "nav-link-selected": {
