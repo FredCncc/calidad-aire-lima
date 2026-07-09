@@ -333,8 +333,8 @@ else:
                 "1. Monitoreo Geográfico (OpenMeteo)",
                 "2. Análisis Estacional y Flujos",
                 "3. Análisis Horario y Tráfico",
-                "4. Nivel Relacional (Pearson)",
-                "5. Nivel Explicativo (Causalidad)",
+                "4. Nivel Relacional (Spearman)",
+                "5. Nivel Explicativo",
                 "6. Nivel Predictivo (BigQuery ML)",
 
             ],
@@ -447,15 +447,15 @@ else:
         # Pon aquí tu enlace de Looker de la Página 3 de tu nueva tarea:
         st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/p_02gfqv444d", height=720)
 
-    elif opcion_modulo == "4. Nivel Relacional (Pearson)":
+    elif opcion_modulo == "4. Nivel Relacional (Spearman)":
         st.markdown("### 🔗 FASE 2: NIVEL RELACIONAL - IMPACTO GEOGRÁFICO")
-        # Pon aquí tu enlace de Looker del Gráfico de Dispersión de Pearson:
-        st.iframe(src="https://datastudio.google.com/embed/reporting/2ab73939-0c03-4fdc-a716-46208631bc1b/page/tEnnC", height=720)
+        # Pon aquí tu enlace de Looker del Gráfico de Dispersión de Spearman:
+        st.iframe(src="https://datastudio.google.com/embed/reporting/f787c40c-c07b-45e5-b4d8-3878e37643d7/page/tEnnC", height=720)
 
-    elif opcion_modulo == "5. Nivel Explicativo (Causalidad)":
-        st.markdown("### 🔍 FASE 2: NIVEL EXPLICATIVO - CAUSA Y EFECTO")
+    elif opcion_modulo == "5. Nivel Explicativo":
+        st.markdown("### 🔍 FASE 2: Nivel Explicativo: Modelo de Regresión Lineal")
         # Pon aquí tu enlace de Looker de la Regresión Logística (Barras Azules/Naranjas):
-        st.iframe(src="https://datastudio.google.com/embed/reporting/4f4b1b41-be94-43d3-a138-9254f9320496/page/tEnnC", height=720)
+        st.iframe(src="https://datastudio.google.com/embed/reporting/55c3799a-1d32-4445-b49f-7b2d035de0b1/page/tEnnC", height=720)
 
     elif opcion_modulo == "6. Nivel Predictivo (BigQuery ML)":
         st.markdown("### 🔮 FASE 2: NIVEL PREDICTIVO - MACHINE LEARNING ARIMA_PLUS")
