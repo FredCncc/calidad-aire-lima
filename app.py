@@ -12,6 +12,17 @@ def encriptar_clave(clave):
 
 # Configurar la página de Streamlit
 st.set_page_config(page_title="Business Intelligence - Contaminación del Aire Lima", page_icon="🌎", layout="wide")
+# Código para ocultar la barra superior (Header de Streamlit)
+st.markdown(
+    """
+    <style>
+    header[data-testid="stHeader"] {
+        display: none !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # --- FUNCIÓN DE VALIDACIÓN DE CORREO ---
 def es_correo_valido(correo):
