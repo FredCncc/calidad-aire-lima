@@ -28,7 +28,7 @@ DB_HOST = "aws-1-us-east-2.pooler.supabase.com"
 DB_PORT = "6543"
 DB_NAME = "postgres"
 DB_USER = "postgres.mstdoqrqeuhghzohqdgy"
-DB_PASSWORD = "2004Coldplaydeco004"
+DB_PASSWORD = st.secrets["DB_PASSWORD"]
 
 def ejecutar_consulta(query, datos=None, registrar=False):
     try:
