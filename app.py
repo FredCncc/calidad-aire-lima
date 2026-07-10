@@ -1,6 +1,6 @@
 import streamlit as st
 import base64
-import sqlite3
+import psycopg2
 import re  # Librería nativa de Python para validar correos
 import hashlib
 from streamlit_option_menu import option_menu  # Requrequiere: pip install streamlit-option-menu
@@ -20,51 +20,59 @@ def es_correo_valido(correo):
     return re.match(patron, correo) is not None
 
 # --- CONEXIÓN A BASE DE DATOS ---
-def ejecutar_consulta(query, datos=None, registrar=False):
-    # Esto crea automáticamente el archivo de la base de datos si no existe
-    conexion = sqlite3.connect("usuarios.db")
-    cursor = conexion.cursor()
-    
-    # Crea la tabla de usuarios automáticamente si es la primera vez que corre
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        correo TEXT UNIQUE,
-        usuario TEXT UNIQUE,
-        clave TEXT
-    )
-    """)
-    conexion.commit()
-    try:
-        cursor.execute(
-            "INSERT OR IGNORE INTO usuarios (correo, usuario, clave) VALUES (?, ?, ?)",
-            ("admin@sistema.com", "admin", "admin1234")
-        )
-        conexion.commit()
-    except Exception as e:
-        pass
+DB_URL = "postgresql://postgres.mstdoqrqeunhghzohqdgy:2004Coldplaydeco004@://supabase.com"
 
-    
+def ejecutar_consulta(query, datos=None, registrar=False):
     try:
+        # Nos conectamos al servidor PostgreSQL en la nube de Supabase
+        conexion = psycopg2.connect(DB_URL)
+        cursor = conexion.cursor()
+        
+        # Intentamos crear la tabla en la nube si por alguna razón no existiera
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id SERIAL PRIMARY KEY,
+            correo TEXT UNIQUE NOT NULL,
+            usuario TEXT UNIQUE NOT NULL,
+            clave TEXT NOT NULL
+        );
+        """)
+        conexion.commit()
+
+        # Insertamos al administrador por defecto si no existe
+        clave_admin_encriptada = encriptar_clave("admin1234")
+        cursor.execute("""
+            INSERT INTO usuarios (correo, usuario, clave) 
+            VALUES (%s, %s, %s) 
+            ON CONFLICT (usuario) DO NOTHING;
+        """, ("admin@sistema.com", "admin", clave_admin_encriptada))
+        conexion.commit()
+        
+        # Ejecutamos la consulta del Login o Registro
         if datos:
-            cursor.execute(query, datos)
+            # PostgreSQL usa %s en lugar del signo ? de SQLite
+            query_adaptada = query.replace("?", "%s")
+            cursor.execute(query_adaptada, datos)
         else:
             cursor.execute(query)
-            
+        
         if registrar:
             conexion.commit()
             return True
         else:
             return cursor.fetchall()
             
-    except sqlite3.IntegrityError:
-        # Esto maneja de forma automática los usuarios o correos duplicados
+    except psycopg2.errors.UniqueViolation:
+        # Maneja usuarios o correos duplicados en la nube
         return "duplicado"
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error de conexión en la nube: {e}")
         return False
     finally:
-        conexion.close()
+        if 'conexion' in locals():
+            cursor.close()
+            conexion.close()
+
 
 
 # --- FUNCIÓN PARA EL VIDEO EN BASE64 ---
@@ -156,7 +164,7 @@ if not st.session_state.logueado:
        
         if btn_ingresar:
             clave_login_encriptada = encriptar_clave(clave_login)
-            query = "SELECT usuario FROM usuarios WHERE (usuario = ? OR correo = ?) AND clave = ?"
+            query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
             usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
            
             if usuario_encontrado:
@@ -183,7 +191,7 @@ if not st.session_state.logueado:
                 st.error("❌ Por seguridad, la contraseña debe tener al menos 8 caracteres.")
             else:
                 clave_encriptada = encriptar_clave(reg_clave)
-                query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (?, ?, ?)"
+                query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
                 datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
                
                 resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
