@@ -20,15 +20,29 @@ def es_correo_valido(correo):
     return re.match(patron, correo) is not None
 
 # --- CONEXIÓN A BASE DE DATOS ---
-DB_URL = "postgresql://postgres.mstdoqrqeunhghzohqdgy:2004Coldplaydeco004@://supabase.com"
+# ==============================================================================
+# ==============================================================================
+# # --- CONEXIÓN CONFIGURADA PARA LA NUBE (SUPABASE) ---
+# ==============================================================================
+DB_HOST = "://supabase.com"
+DB_PORT = "6543"
+DB_NAME = "postgres"
+DB_USER = "postgres.mstdoqrqeunhghzohqdgy"
+DB_PASSWORD = "2004Coldplaydeco004"
 
 def ejecutar_consulta(query, datos=None, registrar=False):
     try:
-        # Nos conectamos al servidor PostgreSQL en la nube de Supabase
-        conexion = psycopg2.connect(DB_URL)
+        # AQUÍ ESTÁ EL ARREGLO: Pasamos las variables explícitas que definiste arriba
+        conexion = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD
+        )
         cursor = conexion.cursor()
         
-        # Intentamos crear la tabla en la nube si por alguna razón no existiera
+        # Crear tabla si no existe
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id SERIAL PRIMARY KEY,
@@ -39,7 +53,7 @@ def ejecutar_consulta(query, datos=None, registrar=False):
         """)
         conexion.commit()
 
-        # Insertamos al administrador por defecto si no existe
+        # Insertar administrador por defecto de respaldo
         clave_admin_encriptada = encriptar_clave("admin1234")
         cursor.execute("""
             INSERT INTO usuarios (correo, usuario, clave) 
@@ -48,9 +62,8 @@ def ejecutar_consulta(query, datos=None, registrar=False):
         """, ("admin@sistema.com", "admin", clave_admin_encriptada))
         conexion.commit()
         
-        # Ejecutamos la consulta del Login o Registro
+        # Ejecutar la consulta recibida
         if datos:
-            # PostgreSQL usa %s en lugar del signo ? de SQLite
             query_adaptada = query.replace("?", "%s")
             cursor.execute(query_adaptada, datos)
         else:
@@ -63,7 +76,6 @@ def ejecutar_consulta(query, datos=None, registrar=False):
             return cursor.fetchall()
             
     except psycopg2.errors.UniqueViolation:
-        # Maneja usuarios o correos duplicados en la nube
         return "duplicado"
     except Exception as e:
         print(f"Error de conexión en la nube: {e}")
