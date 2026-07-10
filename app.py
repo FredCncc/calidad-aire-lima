@@ -24,10 +24,10 @@ def es_correo_valido(correo):
 # ==============================================================================
 # # --- CONEXIÓN CONFIGURADA PARA LA NUBE (SUPABASE) ---
 # ==============================================================================
-DB_HOST = "://supabase.com"
+DB_HOST = "aws-1-us-east-2.pooler.supabase.com"
 DB_PORT = "6543"
 DB_NAME = "postgres"
-DB_USER = "postgres.mstdoqrqeunhghzohqdgy"
+DB_USER = "postgres.mstdoqrqeuhghzohqdgy"
 DB_PASSWORD = "2004Coldplaydeco004"
 
 def ejecutar_consulta(query, datos=None, registrar=False):
@@ -38,7 +38,8 @@ def ejecutar_consulta(query, datos=None, registrar=False):
             port=DB_PORT,
             database=DB_NAME,
             user=DB_USER,
-            password=DB_PASSWORD
+            password=DB_PASSWORD,
+            sslmode="require"
         )
         cursor = conexion.cursor()
         
