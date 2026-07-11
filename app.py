@@ -12,24 +12,18 @@ def encriptar_clave(clave):
 
 # Configurar la página de Streamlit
 st.set_page_config(page_title="Business Intelligence - Contaminación del Aire Lima", page_icon="🌎", layout="wide")
-# Código corregido para ocultar la barra superior sin romper el botón del menú lateral
+# Header transparente sin ocultar ningún contenedor: así el botón para
+# colapsar/reabrir el sidebar (que vive dentro del header) nunca se bloquea.
+# El botón "Deploy" ya está oculto por 'toolbarMode = "viewer"' en config.toml.
 st.markdown(
     """
     <style>
-    /* Oculta los elementos decorativos superiores del Header, pero mantiene vivo el contenedor */
     header[data-testid="stHeader"] {
         background-color: transparent !important;
         box-shadow: none !important;
     }
-    header[data-testid="stHeader"] > div:first-child {
-        display: none !important;
-    }
-    
-    /* Asegura que el botón flotante para reabrir el menú permanezca siempre visible */
-    button[data-testid="collapsedControl"] {
-        display: flex !important;
-        z-index: 999999 !important;
-    }
+    #MainMenu { visibility: hidden; }
+    footer { visibility: hidden; }
     </style>
     """,
     unsafe_allow_html=True
@@ -111,12 +105,7 @@ def ejecutar_consulta(query, datos=None, registrar=False):
 
 
 
-# --- FUNCIÓN PARA EL VIDEO EN BASE64 ---
 @st.cache_resource
-def obtener_video_base64(ruta_video):
-    with open(ruta_video, "rb") as video_file:
-        datos = video_file.read()
-    return base64.b64encode(datos).decode()
 def obtener_imagen_base64(ruta_imagen):
     with open(ruta_imagen, "rb") as image_file:
         datos = image_file.read()
@@ -131,28 +120,6 @@ if "nombre_usuario" not in st.session_state:
 # --- INTERFAZ 1: CAJA FLOTANTE DE LOGIN / REGISTRO ---
 if not st.session_state.logueado:
     
-    # 🌟 EL VIDEO SE MUEVE AQUÍ: Solo se procesará si no está logueado
-    ruta_del_video = "assets/video_contaminacion.mp4"
-    try:
-        video_codificado = obtener_video_base64(ruta_del_video)
-        estilos_video = f"""
-        <style>
-        #video-fondo {{
-            position: fixed; right: 0; bottom: 0;
-            min-width: 100%; min-height: 100%;
-            width: auto; height: auto; z-index: -100;
-            background-size: cover; opacity: 0.25;
-        }}
-        .stApp {{ background: transparent; }}
-        </style>
-        <video autoplay loop muted playsinline id="video-fondo">
-            <source src="data:video/mp4;base64,{video_codificado}" type="video/mp4">
-        </video>
-        """
-        st.markdown(estilos_video, unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("⚠️ No se encontró el video en assets/video_contaminacion.mp4.")
-    
     # Encabezado superior con proporciones fijas [1, 3, 1] para evitar errores de Streamlit
     col_logo1, col_titulo, col_logo2 = st.columns([1, 3, 1])
     
@@ -161,82 +128,99 @@ if not st.session_state.logueado:
         
     with col_titulo:
         st.markdown("""
-        <h1 style='text-align:center; color:#111111; font-size: 26px; margin-bottom:0; font-weight: bold;'>
+        <h1 style='text-align:center; color:var(--text-color); font-size: 26px; margin-bottom:0; font-weight: bold;'>
         Big Data Analitycs para el comportamiento de contaminantes del aire en Lima Metropolitana
         </h1>
         <h4 style='text-align:center; color:#0284c7; font-size: 16px; margin-top:5px; font-weight: 500;'>
         Universidad César Vallejo - SENAMHI
         </h4>
         <br>
-        <h3 style='text-align: center; color: #111111; font-size: 20px; margin-bottom: 5px;'>🔐 Inicio de Sesión</h3>
+        <h3 style='text-align: center; color: var(--text-color); font-size: 20px; margin-bottom: 5px;'>🔐 Inicio de Sesión</h3>
         """, unsafe_allow_html=True)
         
     with col_logo2:
         st.image("assets/logo_senamhi.png", width=140)
    
     st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 0px; margin-bottom: 25px;'>", unsafe_allow_html=True)
-    
+
+    # --- LAYOUT LADO A LADO: VIDEO | LOGIN ---
+    #    Cuando tengas el link del video
+    #    de abajo por: st.video("https://tu-link-aqui")
+    RUTA_VIDEO = "assets/video_contaminacion.mp4"
+
+    col_video, col_login = st.columns([1, 1], gap="large")
+
+    with col_video:
+        st.markdown(
+            "<h4 style='text-align:center; color:var(--text-color); margin-bottom:10px;'>📹 Video informativo</h4>",
+            unsafe_allow_html=True
+        )
+        try:
+            st.video(RUTA_VIDEO)
+        except FileNotFoundError:
+            st.warning("No se encontró el video")
+
     # Estilo de la caja flotante exclusiva para el formulario
     st.markdown("""
     <style>
     [data-testid="stTabs"] {
-        background-color: rgba(255, 255, 255, 0.96);
+        background-color: var(--secondary-background-color);
         padding: 30px;
         border-radius: 16px;
         box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.35);
-        max-width: 480px;
-        margin: auto;
+        width: 100%;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
+    with col_login:
+        pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
    
-    # --- PESTAÑA INICIAR SESIÓN ---
-    with pestana_login:
-        usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
-        clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
-        btn_ingresar = st.button("Ingresar al Portal", use_container_width=True, key="btn_ingresar_login")
-       
-        if btn_ingresar:
-            clave_login_encriptada = encriptar_clave(clave_login)
-            query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
-            usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
+        # --- PESTAÑA INICIAR SESIÓN ---
+        with pestana_login:
+            usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
+            clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
+            btn_ingresar = st.button("Ingresar al Portal", use_container_width=True, key="btn_ingresar_login")
            
-            if usuario_encontrado:
-                st.session_state.logueado = True
-                st.session_state.nombre_usuario = usuario_login
-                st.rerun()
-            else:
-                st.error("❌ Usuario, correo o contraseña incorrectos.")
-                   
-    # --- PESTAÑA REGISTRO SEGURO ---
-    with pestana_registro:
-        reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
-        reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
-        reg_clave = st.text_input("Contraseña Segura", type="password", help="Mínimo 8 caracteres", key="registro_input_clave")
-       
-        btn_registrar = st.button("Crear Cuenta Asegurada", use_container_width=True, key="btn_registrar_reg")
-       
-        if btn_registrar:
-            if not (reg_correo and reg_usuario and reg_clave):
-                st.warning("⚠️ Todos los campos son obligatorios.")
-            elif not es_correo_valido(reg_correo):
-                st.error("❌ El formato del correo electrónico no es válido.")
-            elif len(reg_clave) < 8:
-                st.error("❌ Por seguridad, la contraseña debe tener al menos 8 caracteres.")
-            else:
-                clave_encriptada = encriptar_clave(reg_clave)
-                query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
-                datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
+            if btn_ingresar:
+                clave_login_encriptada = encriptar_clave(clave_login)
+                query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
+                usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
                
-                resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
-                if resultado_reg == "duplicado":
-                    st.error("❌ El usuario o correo ya se encuentra registrado.")
-                elif resultado_reg:
-                    st.success("🎉 ¡Cuenta creada con éxito! Pasa a la pestaña de Iniciar Sesión.")
+                if usuario_encontrado:
+                    st.session_state.logueado = True
+                    st.session_state.nombre_usuario = usuario_login
+                    st.rerun()
                 else:
-                    st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
+                    st.error("❌ Usuario, correo o contraseña incorrectos.")
+
+        # --- PESTAÑA REGISTRO SEGURO ---
+        with pestana_registro:
+            reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
+            reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
+            reg_clave = st.text_input("Contraseña Segura", type="password", help="Mínimo 8 caracteres", key="registro_input_clave")
+           
+            btn_registrar = st.button("Crear Cuenta Asegurada", use_container_width=True, key="btn_registrar_reg")
+           
+            if btn_registrar:
+                if not (reg_correo and reg_usuario and reg_clave):
+                    st.warning("⚠️ Todos los campos son obligatorios.")
+                elif not es_correo_valido(reg_correo):
+                    st.error("❌ El formato del correo electrónico no es válido.")
+                elif len(reg_clave) < 8:
+                    st.error("❌ Por seguridad, la contraseña debe tener al menos 8 caracteres.")
+                else:
+                    clave_encriptada = encriptar_clave(reg_clave)
+                    query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
+                    datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
+                   
+                    resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
+                    if resultado_reg == "duplicado":
+                        st.error("❌ El usuario o correo ya se encuentra registrado.")
+                    elif resultado_reg:
+                        st.success("🎉 ¡Cuenta creada con éxito! Pasa a la pestaña de Iniciar Sesión.")
+                    else:
+                        st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
 
 # --- INTERFAZ 2: ENTORNO INTERNO DEL SOFTWARE (PANEL PRINCIPAL) ---
 else:
@@ -273,9 +257,9 @@ else:
             svg_codificado = obtener_imagen_base64(ruta_del_svg)
             estilos_fondo_sistema = f"""
             <style>
-            /* 1. Fondo base con degradado suave crema/arena idéntico al de AQI.in */
+            /* 1. Fondo base: usa el color de fondo del tema activo (claro u oscuro) */
             .stApp {{ 
-                background: linear-gradient(180deg, #fdfbf7 0%, #f7f3eb 100%) !important;
+                background: var(--background-color) !important;
             }}
             
             /* 2. Silueta de Perú fijada perfectamente en la parte inferior del fondo */
@@ -295,7 +279,8 @@ else:
                 z-index: 0;
             }}
             
-            /* 3. Estilos de texto oscuros para máxima lectura sobre el fondo claro */
+            /* 3. El texto ya adopta el color correcto del tema activo de Streamlit por defecto;
+                  solo lo traemos al frente de la silueta de fondo. */
             [data-testid="stMainBlockContainer"] h1,
             [data-testid="stMainBlockContainer"] h2,
             [data-testid="stMainBlockContainer"] h3,
@@ -304,7 +289,6 @@ else:
             [data-testid="stMainBlockContainer"] p,
             [data-testid="stMainBlockContainer"] span,
             [data-testid="stMainBlockContainer"] label {{
-                color: #1e293b !important; /* Gris azulado oscuro muy legible */
                 position: relative; 
                 z-index: 1;
             }}
@@ -316,10 +300,7 @@ else:
 
     # =========================================================================
 
-    # 🌟 DEFINICIÓN DE LAS FUNCIONES MÓDULO (Tu código continúa exactamente igual desde aquí...)
-    def mostrar_open_data():
-        st.title("📂 Descarga de Datos Abiertos (Open Data)")
-    # 🌟 DEFINICIÓN DE LAS FUNCIONES MÓDULO (Colocadas arriba para evitar el error de Pylance)
+    # 🌟 DEFINICIÓN DE LAS FUNCIONES MÓDULO
     def mostrar_open_data():
         st.title("📂 Descarga de Datos Abiertos (Open Data)")
         st.write("Bienvenido al portal de Open Data. Aquí puedes obtener los conjuntos de datos limpios y procesados sobre los contaminantes del aire en Lima Metropolitana.")
@@ -396,16 +377,16 @@ else:
                     "text-align": "left", 
                     "margin": "6px 0px",              # <-- Separación física real entre botones
                     "border-radius": "8px",            # <-- Bordes redondeados más visibles
-                    "background-color": "#ffffff",     # <-- FONDO BLANCO FIJO para que resalte sobre el fondo gris de la barra lateral
-                    "color": "#1e293b",                # <-- Texto oscuro legible
-                    "border": "1px solid #e2e8f0",     # <-- BORDE GRIS CLARO para darle volumen al botón
-                    "box-shadow": "0px 2px 4px rgba(0,0,0,0.05)", # <-- SOMBRA REAL sutil para que parezcan tarjetas flotantes
+                    "background-color": "var(--secondary-background-color)",  # <-- Se adapta a claro/oscuro
+                    "color": "var(--text-color)",                             # <-- Texto legible en ambos temas
+                    "border": "1px solid rgba(128,128,128,0.25)",             # <-- Borde sutil en ambos temas
+                    "box-shadow": "0px 2px 4px rgba(0,0,0,0.10)", # <-- SOMBRA REAL sutil para que parezcan tarjetas flotantes
                     "transition": "all 0.2s ease"      # <-- Animación fluida para el mouse
                 },
                 "nav-link-hover": {
-                    "background-color": "#cbd5e1",     # <-- PLOMO MÁS OSCURO al pasar el mouse para que se note el cambio de estado
-                    "color": "#0f172a",
-                    "border": "1px solid #94a3b8"      # <-- El borde también se oscurece al pasar el puntero
+                    "background-color": "rgba(128,128,128,0.25)",  # <-- Se nota el cambio en ambos temas
+                    "color": "var(--text-color)",
+                    "border": "1px solid rgba(128,128,128,0.45)"
                 },
                 "nav-link-selected": {
                     "background-color": "#66d935",     # <-- Tu color verde cuando está activo
@@ -430,7 +411,7 @@ else:
         st.image("assets/logo_ucv.png", width=130)
     with col_main_titulo:
         st.markdown("""
-        <h2 style='text-align:center; color:#111111; margin-bottom:0; font-weight: bold;'>
+        <h2 style='text-align:center; color:var(--text-color); margin-bottom:0; font-weight: bold;'>
         Big Data Analitycs para el comportamiento de contaminantes del aire en Lima Metropolitana
         </h2>
         <h5 style='text-align:center; color:#0284c7; margin-top:5px; font-weight: 500;'>
@@ -505,21 +486,3 @@ else:
         st.markdown("### 🔮 FASE 2: NIVEL PREDICTIVO - MACHINE LEARNING ARIMA_PLUS")
         # Pon aquí tu enlace de Looker del Pronóstico con Bandas de Error:
         st.iframe(src="https://datastudio.google.com/embed/reporting/5eb59328-b988-4560-8a7f-c8a943f78cba/page/tEnnC", height=720)
-
-    
-    
-
-
-    
-
-   
-
-
-    
-
-            
-    
-
-
-
-    
