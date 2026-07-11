@@ -11,7 +11,7 @@ def encriptar_clave(clave):
     return hashlib.sha256(clave.encode()).hexdigest()
 
 # Configurar la página de Streamlit
-st.set_page_config(page_title="Business Intelligence - Contaminación del Aire Lima", page_icon="🌎", layout="wide")
+st.set_page_config(page_title="EcoWayraTec", page_icon="🌎", layout="wide")
 # Header transparente sin ocultar ningún contenedor: así el botón para
 # colapsar/reabrir el sidebar (que vive dentro del header) nunca se bloquea.
 # El botón "Deploy" ya está oculto por 'toolbarMode = "viewer"' en config.toml.
