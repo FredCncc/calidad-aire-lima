@@ -12,6 +12,9 @@ def encriptar_clave(clave):
 
 # Configurar la página de Streamlit
 st.set_page_config(page_title="EcoWayraTec", page_icon="🌎", layout="wide")
+# Header transparente sin ocultar ningún contenedor: así el botón para
+# colapsar/reabrir el sidebar (que vive dentro del header) nunca se bloquea.
+# El botón "Deploy" ya está oculto por 'toolbarMode = "viewer"' en config.toml.
 st.markdown(
     """
     <style>
@@ -96,6 +99,7 @@ if not st.session_state.logueado:
     if "mostrando_formulario" not in st.session_state:
         st.session_state.mostrando_formulario = False
 
+    # Carga segura de tus nuevas imágenes corporativas
     try:
         img_bienvenida = obtener_imagen_base64("assets/fondo.png")
         img_fondo_login = obtener_imagen_base64("assets/limanoche.png")
@@ -103,7 +107,10 @@ if not st.session_state.logueado:
         st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
         st.stop()
 
+        # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN SUPERIOR INDEPENDIENTE) ---
     if not st.session_state.mostrando_formulario:
+
+        # ==================== PRIMERA INTERFAZ ====================
 
         try:
             fondo = obtener_imagen_base64("assets/fondo_inicio.png")
@@ -236,6 +243,7 @@ if not st.session_state.logueado:
     else:
         login_styles = f"""
         <style>
+        /* Imagen de fondo difuminada de Lima de Noche */
         .stApp {{
             background-image: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)), 
                               url('data:image/png;base64,{img_fondo_login}') !important;
@@ -243,6 +251,8 @@ if not st.session_state.logueado:
             background-position: center !important;
             background-attachment: fixed !important;
         }}
+        
+        /* Contenedor maestro que unifica las dos columnas de Streamlit */
         [data-testid="stHorizontalBlock"] {{
             max-width: 1000px;
             margin: 50px auto !important;
@@ -252,25 +262,34 @@ if not st.session_state.logueado:
             overflow: hidden;
             gap: 0px !important;
         }}
+        
+        /* Panel Informativo Izquierdo (Verde Premium) */
         [data-testid="stHorizontalBlock"] > div:nth-child(1) {{
             background: linear-gradient(135deg, #0f2c1b, #1b442b) !important;
             padding: 55px 45px !important;
             color: #ffffff !important;
         }}
+        
+        /* Panel del Formulario Derecho (Blanco Puro) */
         [data-testid="stHorizontalBlock"] > div:nth-child(2) {{
             background: #ffffff !important;
             padding: 55px 45px !important;
         }}
+        
+        /* Formateo de los textos del panel izquierdo */
         .panel-izquierdo-text h1 {{ color: #ffffff !important; font-size: 32px; font-weight: 700; margin-bottom: 15px; }}
         .panel-izquierdo-text p {{ color: #cbd5e1 !important; font-size: 15px; margin-bottom: 35px; opacity: 0.95; }}
         .item-info {{ display: flex; align-items: center; margin-bottom: 22px; font-size: 14px; font-weight: 500; color: #ffffff !important; }}
         .icon-box {{ background: rgba(255,255,255,0.18); padding: 8px 12px; border-radius: 50%; margin-right: 15px; }}
+        
+        /* Forzar color oscuro para los textos de los inputs en el formulario blanco */
         [data-testid="stHorizontalBlock"] label {{ color: #1e293b !important; font-weight: 600; }}
         [data-testid="stHeader"] {{ display: none !important; }}
         </style>
         """
         st.markdown(login_styles, unsafe_allow_html=True)
         
+        # Declaramos las dos columnas nativas distribuidas
         col_izq, col_der = st.columns([1.1, 1])
         
         with col_izq:
@@ -285,6 +304,7 @@ if not st.session_state.logueado:
             """, unsafe_allow_html=True)
             
         with col_der:
+             # Botón de escape para volver a la pantalla de la primera imagen
             st.markdown("<hr style='border: 0.5px solid #e2e8f0; margin: 20px 0;'>", unsafe_allow_html=True)
             if st.button("⬅️ Volver al Inicio", use_container_width=False, key="btn_volver_menu"):
                 st.session_state.mostrando_formulario = False
@@ -294,6 +314,7 @@ if not st.session_state.logueado:
 
             pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
     
+            # --- PESTAÑA INICIAR SESIÓN ---
             with pestana_login:
                 usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
                 clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
@@ -311,6 +332,7 @@ if not st.session_state.logueado:
                     else:
                         st.error("❌ Usuario, correo o contraseña incorrectos.")
 
+            # --- PESTAÑA REGISTRO SEGURO ---
             with pestana_registro:
                 reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
                 reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
@@ -339,7 +361,7 @@ if not st.session_state.logueado:
                             st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
 
 else:
-    import pandas as pd
+    import pandas as pd  # Para estructurar las tablas del diccionario de datos
     import sqlite3
     import base64
 
