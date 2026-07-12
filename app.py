@@ -132,193 +132,73 @@ if not st.session_state.logueado:
         st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
         st.stop()
 
-    # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC ---
-if not st.session_state.mostrando_formulario:
-    # Definimos los estilos CSS definitivos para superponer los elementos sobre el fondo completo
-    presentacion_html = f"""
-    <style>
-        /* Forzar que el fondo ocupe absolutamente toda la pantalla */
-        .stApp {{ 
-            background-image: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0.15)), url('data:image/png;base64,{img_bienvenida}') !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-attachment: fixed !important;
-            height: 100vh !important;
+        # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN SUPERIOR INDEPENDIENTE) ---
+    if not st.session_state.mostrando_formulario:
+        presentacion_html = f"""
+        <style>
+        /* 1. Fondo oscuro uniforme para toda la aplicación */
+        .stApp {{
+            background-color: #0f172a !important;
         }}
         
-        /* Limpieza total de los contenedores y márgenes nativos molestos de Streamlit */
+        /* 2. Removemos márgenes nativos estorbosos de Streamlit */
         [data-testid="stMainBlockContainer"] {{
             max-width: 100% !important;
-            padding: 0px !important;
-            height: 100vh !important;
-        }}
-        
-        [data-testid="stHeader"], [data-testid="stSidebar"], [data-testid="stVerticalBlock"] {{
-            display: none !important;
+            padding-top: 30px !important;
         }}
 
-        /* Contenedor Maestro Flexbox para distribuir el diseño en 3 zonas verticales */
-        .interface-master {{
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100vh;
-            padding: 30px;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }}
-
-        /* Zona 1: Fila superior de Logotipos */
-        .top-logos-row {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }}
-        .logo-card {{
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 8px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }}
-        .logo-card img {{
-            height: 45px;
-            width: auto;
-            display: block;
-        }}
-        .brand-text {{
-            font-size: 22px;
-            font-weight: 800;
-            color: #0f2c1b;
-        }}
-
-        /* Zona 2: Bloque de textos central flotante */
-        .center-text-block {{
+        /* 3. Contenedor superior para el botón centrado */
+        .top-button-container {{
             text-align: center;
-            max-width: 750px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }}
-        .title-main {{
-            font-size: 38px;
-            font-weight: 800;
-            color: #0f2c1b;
-            margin: 0px 0px 5px 0px;
-            line-height: 1.2;
-        }}
-        .title-sub {{
-            font-size: 26px;
-            font-weight: 700;
-            color: #16a34a;
-            margin: 0px 0px 20px 0px;
-        }}
-        .text-desc {{
-            font-size: 16px;
-            color: #334155;
-            font-weight: 500;
-            line-height: 1.5;
-            margin: 0;
+            max-width: 260px;
+            margin: 0 auto 20px auto !important; /* Margen inferior para separarlo del afiche */
         }}
 
-        /* Zona 3: Barra inferior oscura de características */
-        .bottom-status-bar {{
-            background: linear-gradient(135deg, #0f2c1b, #1b442b);
-            border-radius: 14px;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            width: 100%;
-            box-sizing: border-box;
-        }}
-        .features-flex {{
-            display: flex;
-            gap: 35px;
-        }}
-        .feature-tag {{
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }}
-        .feature-tag::before {{
-            content: "✓";
-            color: #4ed01b;
-            font-weight: 900;
-        }}
-        
-        /* Encapsulador exclusivo para recortar el botón gigante de Streamlit */
-        .streamlit-button-box {{
-            width: 220px;
-        }}
-        .streamlit-button-box button {{
-            background-color: #16a34a !important;
+        /* Personalización del botón real verde premium */
+        .top-button-container button {{
+            background-color: #10b981 !important; /* Verde corporativo EcoWayraTec */
             color: white !important;
             border: none !important;
-            border-radius: 8px !important;
+            border-radius: 12px !important;
             font-weight: bold !important;
-            height: 42px !important;
-            width: 100% !important;
-            font-size: 14px !important;
-            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3) !important;
-            transition: transform 0.2s ease !important;
+            box-shadow: 0px 4px 15px rgba(16, 185, 129, 0.4) !important;
+            height: 44px !important;
+            transition: all 0.3s ease !important;
         }}
-        .streamlit-button-box button:hover {{
-            background-color: #15803d !important;
+        
+        .top-button-container button:hover {{
+            background-color: #059669 !important; /* Verde más oscuro al pasar el mouse */
             transform: scale(1.02) !important;
         }}
-    </style>
 
-    <div class="interface-master">
-        <!-- 1. Encabezado de logotipos -->
-        <div class="top-logos-row">
-            <div class="logo-card">
-                <img src="data:image/png;base64,{obtener_imagen_base64('assets/logo_ucv.png')}" alt="Logo UCV">
-            </div>
-            <div class="logo-card" style="padding: 8px 25px;">
-                <span class="brand-text">🍃 EcoWayraTec</span>
-            </div>
-            <div class="logo-card">
-                <img src="data:image/png;base64,{obtener_imagen_base64('assets/logo_senamhi.png')}" alt="Logo Senamhi">
-            </div>
-        </div>
-
-        <!-- 2. Textos informativos del centro -->
-        <div class="center-text-block">
-            <h1 class="title-main">Monitoreo Inteligente<br>de la Calidad del Aire</h1>
-            <h2 class="title-sub">Lima Metropolitana</h2>
-            <p class="text-desc">
-                Plataforma de análisis y visualización de contaminantes<br>
-                atmosféricos para la toma de decisiones informadas.
-            </p>
-        </div>
-
-        <!-- 3. Barra de abajo completa -->
-        <div class="bottom-status-bar">
-            <div class="features-flex">
-                <div class="feature-tag">Datos abiertos</div>
-                <div class="feature-tag">Inteligencia de Negocios</div>
-                <div class="feature-tag">Bienestar Ambiental</div>
-            </div>
-            <div class="streamlit-button-box">
-    """
-    
-    # Renderizamos toda la maquetación HTML limpia construida
-    st.markdown(presentacion_html, unsafe_allow_html=True)
-    
-    # El botón real queda atrapado dentro de la cajita CSS fija (.streamlit-button-box) para que no se estire
-    if st.button("INGRESAR AL PORTAL", key="btn_ingreso_definitivo"):
-        st.session_state.mostrando_formulario = True
-        st.rerun()
+        /* 4. Tarjeta del afiche estático */
+        .welcome-card-static {{
+            max-width: 850px;
+            margin: 0 auto !important; /* Centrado horizontal perfecto */
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        }}
         
+        .welcome-card-static img {{
+            width: 100%;
+            display: block;
+            height: auto;
+        }}
+        
+        /* Oculta cabeceras y elementos de interfaz nativos de Streamlit */
+        [data-testid="stHeader"], [data-testid="stSidebar"] {{ display: none !important; }}
+        </style>
+        
+        <!-- Contenedor del Botón Superior -->
+        <div class="top-button-container">
+        """
+        st.markdown(presentacion_html, unsafe_allow_html=True)
+        
+        # El botón de Streamlit se inyecta directamente dentro de la zona superior estilizada
+        if st.button("🚀 INGRESAR AL PORTAL", use_container_width=True, key="btn_superior_acceso_v5"):
+            st.session_state.mostrando_formulario = True
+            st.rerun()
             
         # Cerramos el contenedor del botón y abrimos la tarjeta del afiche limpio abajo
         st.markdown(f"""
