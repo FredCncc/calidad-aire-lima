@@ -134,87 +134,132 @@ if not st.session_state.logueado:
 
         # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN SUPERIOR INDEPENDIENTE) ---
     if not st.session_state.mostrando_formulario:
-        presentacion_html = f"""
-        <style>
-        /* 1. Fondo oscuro uniforme para toda la aplicación */
-        .stApp {{
-            background-color: #0f172a !important;
-        }}
-        
-        /* 2. Removemos márgenes nativos estorbosos de Streamlit */
-        [data-testid="stMainBlockContainer"] {{
-            max-width: 100% !important;
-            padding-top: 30px !important;
-        }}
 
-        /* 3. Contenedor superior para el botón centrado */
-        .top-button-container {{
-            text-align: center;
-            max-width: 260px;
-            margin: 0 auto 20px auto !important; /* Margen inferior para separarlo del afiche */
-        }}
+        # ==================== PRIMERA INTERFAZ ====================
 
-        /* Personalización del botón real verde premium */
-        .top-button-container button {{
-            background-color: #10b981 !important; /* Verde corporativo EcoWayraTec */
-            color: white !important;
-            border: none !important;
-            border-radius: 12px !important;
-            font-weight: bold !important;
-            box-shadow: 0px 4px 15px rgba(16, 185, 129, 0.4) !important;
-            height: 44px !important;
-            transition: all 0.3s ease !important;
-        }}
-        
-        .top-button-container button:hover {{
-            background-color: #059669 !important; /* Verde más oscuro al pasar el mouse */
-            transform: scale(1.02) !important;
-        }}
+        try:
+            fondo = obtener_imagen_base64("assets/fondo_inicio.jpg")
+            logo_ucv = obtener_imagen_base64("assets/logo_ucv.png")
+            logo_senamhi = obtener_imagen_base64("assets/logo_senamhi.png")
+        except FileNotFoundError:
+            st.error("No se encontraron las imágenes en la carpeta assets.")
+            st.stop()
 
-        /* 4. Tarjeta del afiche estático */
-        .welcome-card-static {{
-            max-width: 850px;
-            margin: 0 auto !important; /* Centrado horizontal perfecto */
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
-        }}
-        
-        .welcome-card-static img {{
-            width: 100%;
-            display: block;
-            height: auto;
-        }}
-        
-        /* Oculta cabeceras y elementos de interfaz nativos de Streamlit */
-        [data-testid="stHeader"], [data-testid="stSidebar"] {{ display: none !important; }}
-        </style>
-        
-        <!-- Contenedor del Botón Superior -->
-        <div class="top-button-container">
-        """
-        st.markdown(presentacion_html, unsafe_allow_html=True)
-        
-        # El botón de Streamlit se inyecta directamente dentro de la zona superior estilizada
-        if st.button("🚀 INGRESAR AL PORTAL", use_container_width=True, key="btn_superior_acceso_v5"):
-            st.session_state.mostrando_formulario = True
-            st.rerun()
-            
-        # Cerramos el contenedor del botón y abrimos la tarjeta del afiche limpio abajo
         st.markdown(f"""
+        <style>
+
+        .stApp {{
+            background-image:
+                linear-gradient(rgba(255,255,255,0.18),
+                rgba(255,255,255,0.18)),
+                url("data:image/jpg;base64,{fondo}");
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+
+        [data-testid="stMainBlockContainer"] {{
+            padding-top:20px;
+            max-width:100%;
+        }}
+
+        .presentacion{{
+            width:100%;
+            text-align:center;
+        }}
+
+        .logos{{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:20px 60px;
+        }}
+
+        .logo-ucv{{
+            width:180px;
+        }}
+
+        .logo-senamhi{{
+            width:180px;
+        }}
+
+        .titulo{{
+            margin-top:60px;
+            font-size:58px;
+            font-weight:800;
+            color:#0f172a;
+            line-height:1.15;
+        }}
+
+        .subtitulo{{
+            font-size:34px;
+            color:#188038;
+            font-weight:bold;
+            margin-top:10px;
+        }}
+
+        .descripcion{{
+            margin-top:30px;
+            font-size:21px;
+            color:#374151;
+        }}
+
+        </style>
+
+        <div class="presentacion">
+
+        <div class="logos">
+
+        <img class="logo-ucv"
+        src="data:image/png;base64,{logo_ucv}">
+
+        <img class="logo-senamhi"
+        src="data:image/png;base64,{logo_senamhi}">
+
         </div>
-        <div class="welcome-card-static">
-            <img src="data:image/png;base64,{img_bienvenida}">
+
+        <div class="titulo">
+
+        Monitoreo Inteligente<br>
+        de la Calidad del Aire
+
         </div>
+
+        <div class="subtitulo">
+
+        Lima Metropolitana
+
+        </div>
+
+        <div class="descripcion">
+
+        Plataforma de análisis y visualización de contaminantes
+        atmosféricos para la toma de decisiones informadas.
+
+        </div>
+
+        </div>
+
         """, unsafe_allow_html=True)
-        
-        # Botón responsivo centrado en la parte inferior para saltar al login
-        _, col_btn_acceso, _ = st.columns([1, 2, 1])
-        with col_btn_acceso:
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🚀 INGRESAR AL PORTAL", use_container_width=True, key="btn_ir_al_login"):
-                st.session_state.mostrando_formulario = True
+
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+        c1,c2,c3=st.columns([2,1,2])
+
+        with c2:
+
+            if st.button(
+                "🔐 Iniciar Sesión",
+                use_container_width=True,
+                key="btn_inicio"
+            ):
+
+                st.session_state.mostrando_formulario=True
                 st.rerun()
+
+    #------------------------------------------------------------------------------------------------
 
     # --- SUB-PANTALLA B: MODULO DE INICIO DE SESIÓN EN DOS COLUMNAS ---
     else:
