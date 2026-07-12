@@ -143,22 +143,6 @@ if not st.session_state.logueado:
    
     st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 0px; margin-bottom: 25px;'>", unsafe_allow_html=True)
 
-    # --- LAYOUT LADO A LADO: VIDEO | LOGIN ---
-    #    Cuando tengas el link del video
-    #    de abajo por: st.video("https://tu-link-aqui")
-    RUTA_VIDEO = "assets/video_contaminacion.mp4"
-
-    col_video, col_login = st.columns([1, 1], gap="large")
-
-    with col_video:
-        st.markdown(
-            "<h4 style='text-align:center; color:var(--text-color); margin-bottom:10px;'>📹 Video informativo</h4>",
-            unsafe_allow_html=True
-        )
-        try:
-            st.video(RUTA_VIDEO)
-        except FileNotFoundError:
-            st.warning("No se encontró el video")
 
     # Estilo de la caja flotante exclusiva para el formulario
     st.markdown("""
