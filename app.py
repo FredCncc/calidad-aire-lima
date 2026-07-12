@@ -186,10 +186,11 @@ if not st.session_state.logueado:
         """
         st.markdown(presentacion_html, unsafe_allow_html=True)
         
-        # Este botón ahora se renderiza flotando mágicamente sobre la imagen en la esquina inferior derecha
-        if st.button("🚀 INGRESAR AL PORTAL", key="btn_ir_al_login"):
+                # Cambiamos la clave interna para saltar el error de duplicidad
+        if st.button("🚀 INGRESAR AL PORTAL", key="btn_ir_al_login_v3"):
             st.session_state.mostrando_formulario = True
             st.rerun()
+
             
         st.markdown("</div>", unsafe_allow_html=True)
 
