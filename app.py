@@ -223,10 +223,31 @@ if not st.session_state.logueado:
                         st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
 
 # --- INTERFAZ 2: ENTORNO INTERNO DEL SOFTWARE (PANEL PRINCIPAL) ---
+else:
+    import pandas as pd  # Para estructurar las tablas del diccionario de datos
+    import base64
+
+    # --- FORZAR REGISTRO DEL ADMIN (CORREGIDO Y ENCRIPTADO) ---
+    try:
+        # Encriptamos la clave primero para que coincida con el sistema de login
+        clave_admin_encriptada = encriptar_clave("AdminCalidadAire2026")
+        
+        conexion_directa = sqlite3.connect("usuarios.db")
+        cursor_directo = conexion_directa.cursor()
+        cursor_directo.execute(
+            "INSERT OR REPLACE INTO usuarios (id, correo, usuario, clave) VALUES (1, ?, ?, ?)",
+            ("admin@sistema.com", "admin", clave_admin_encriptada)
+        )
+        conexion_directa.commit()
+        conexion_directa.close()
+    except Exception as e:
+        pass
+
    # BLOQUE DEL COLOR DE FONDO DE PERU.SVG
-            else:
-                import pandas as pd
-                import base64
+    else:
+        import pandas as pd
+        import sqlite3
+        import base64
 
         # 🎨 CONFIGURACIÓN DE INTERFAZ PREMIUM (ESTILO AQI.IN)
         ruta_del_svg = "assets/peru.svg"
@@ -464,39 +485,3 @@ if not st.session_state.logueado:
         st.markdown("### 🔮 FASE 2: NIVEL PREDICTIVO - MACHINE LEARNING ARIMA_PLUS")
         # Pon aquí tu enlace de Looker del Pronóstico con Bandas de Error:
         st.iframe(src="https://datastudio.google.com/embed/reporting/5eb59328-b988-4560-8a7f-c8a943f78cba/page/tEnnC", height=720)
-
-# =============================================================================
-# 📜 PIE DE PÁGINA GLOBAL (Va al final de TODO tu archivo app.py, sin sangría)
-# =============================================================================
-footer_global = """
-<style>
-/* Forzamos a que el footer real de Streamlit no estorbe */
-footer {visibility: hidden;}
-
-.footer-container {
-    width: 100%;
-    background-color: #1e293b; /* Color azul oscuro/pizarra elegante */
-    color: #cbd5e1;
-    text-align: center;
-    padding: 20px 10px;
-    margin-top: 60px;
-    border-top: 3px solid #0284c7; /* Línea delgada azul que combina con tu cabecera */
-    border-radius: 8px;
-}
-.footer-text {
-    font-size: 14px;
-    margin: 5px 0;
-    font-weight: 500;
-}
-.footer-credits {
-    font-size: 12px;
-    opacity: 0.7;
-}
-</style>
-
-<div class="footer-container">
-    <p class="footer-text">© 2026 EcoWayraTec - Sistema Inteligente de Monitoreo Ambiental</p>
-    <p class="footer-credits">Desarrollado en colaboración con la Universidad César Vallejo (UCV) utilizando analítica de datos abiertos de SENAMHI.</p>
-</div>
-"""
-st.markdown(footer_global, unsafe_allow_html=True)
