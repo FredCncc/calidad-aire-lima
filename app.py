@@ -120,91 +120,172 @@ if "nombre_usuario" not in st.session_state:
 # --- INTERFAZ 1: CAJA FLOTANTE DE LOGIN / REGISTRO ---
 if not st.session_state.logueado:
     
-    # Encabezado superior con proporciones fijas [1, 3, 1] para evitar errores de Streamlit
-    col_logo1, col_titulo, col_logo2 = st.columns([1, 3, 1])
+    # Inicializamos la variable de control si no existe
+    if "mostrando_formulario" not in st.session_state:
+        st.session_state.mostrando_formulario = False
+
+    # Carga segura de tus nuevas imágenes corporativas
+    try:
+        img_bienvenida = obtener_imagen_base64("assets/fondo.png")
+        img_fondo_login = obtener_imagen_base64("assets/limanoche.png")
+    except FileNotFoundError:
+        st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
+        st.stop()
+
+    # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC ---
+    if not st.session_state.mostrando_formulario:
+        presentacion_html = f"""
+        <style>
+        .stApp {{
+            background: #0f172a !important;
+        }}
+        .welcome-box {{
+            max-width: 850px;
+            margin: 30px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+        }}
+        .welcome-box img {{
+            width: 100%;
+            display: block;
+        }}
+        [data-testid="stHeader"], [data-testid="stSidebar"] {{ display: none !important; }}
+        </style>
+        <div class="welcome-box">
+            <img src="data:image/png;base64,{img_bienvenida}">
+        </div>
+        """
+        st.markdown(presentacion_html, unsafe_allow_html=True)
+        
+        # Botón responsivo centrado en la parte inferior para saltar al login
+        _, col_btn_acceso, _ = st.columns([1, 2, 1])
+        with col_btn_acceso:
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("🚀 INGRESAR AL PORTAL", use_container_width=True, key="btn_ir_al_login"):
+                st.session_state.mostrando_formulario = True
+                st.rerun()
+
+    # --- SUB-PANTALLA B: MODULO DE INICIO DE SESIÓN EN DOS COLUMNAS ---
+    else:
+        login_styles = f"""
+        <style>
+        /* Imagen de fondo difuminada de Lima de Noche */
+        .stApp {{
+            background-image: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)), 
+                              url('data:image/png;base64,{img_fondo_login}') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+        }}
+        
+        /* Contenedor maestro que unifica las dos columnas de Streamlit */
+        [data-testid="stHorizontalBlock"] {{
+            max-width: 1000px;
+            margin: 50px auto !important;
+            background: #ffffff;
+            border-radius: 26px;
+            box-shadow: 0 25px 55px rgba(0,0,0,0.65);
+            overflow: hidden;
+            gap: 0px !important;
+        }}
+        
+        /* Panel Informativo Izquierdo (Verde Premium) */
+        [data-testid="stHorizontalBlock"] > div:nth-child(1) {{
+            background: linear-gradient(135deg, #0f2c1b, #1b442b) !important;
+            padding: 55px 45px !important;
+            color: #ffffff !important;
+        }}
+        
+        /* Panel del Formulario Derecho (Blanco Puro) */
+        [data-testid="stHorizontalBlock"] > div:nth-child(2) {{
+            background: #ffffff !important;
+            padding: 55px 45px !important;
+        }}
+        
+        /* Formateo de los textos del panel izquierdo */
+        .panel-izquierdo-text h1 {{ color: #ffffff !important; font-size: 32px; font-weight: 700; margin-bottom: 15px; }}
+        .panel-izquierdo-text p {{ color: #cbd5e1 !important; font-size: 15px; margin-bottom: 35px; opacity: 0.95; }}
+        .item-info {{ display: flex; align-items: center; margin-bottom: 22px; font-size: 14px; font-weight: 500; color: #ffffff !important; }}
+        .icon-box {{ background: rgba(255,255,255,0.18); padding: 8px 12px; border-radius: 50%; margin-right: 15px; }}
+        
+        /* Forzar color oscuro para los textos de los inputs en el formulario blanco */
+        [data-testid="stHorizontalBlock"] label {{ color: #1e293b !important; font-weight: 600; }}
+        [data-testid="stHeader"] {{ display: none !important; }}
+        </style>
+        """
+        st.markdown(login_styles, unsafe_allow_html=True)
+        
+        # Declaramos las dos columnas nativas distribuidas
+        col_izq, col_der = st.columns([1.1, 1])
+        
+        with col_izq:
+            st.markdown("""
+            <div class="panel-izquierdo-text">
+                <h1>Bienvenido de nuevo 🍃</h1>
+                <p>Ingresa a tu cuenta para continuar monitoreando la calidad del aire en Lima Metropolitana.</p>
+                <div class="item-info"><span class="icon-box">📈</span> Información en tiempo real</div>
+                <div class="item-info"><span class="icon-box">📊</span> Datos confiables y actualizados</div>
+                <div class="item-info"><span class="icon-box">📋</span> Decisiones basadas en evidencia</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with col_der:
+             # Botón de escape para volver a la pantalla de la primera imagen
+            st.markdown("<hr style='border: 0.5px solid #e2e8f0; margin: 20px 0;'>", unsafe_allow_html=True)
+            if st.button("⬅️ Volver al Inicio", use_container_width=False, key="btn_volver_menu"):
+                st.session_state.mostrando_formulario = False
+                st.rerun()
+
+            st.markdown("<h2 style='text-align: center; color: #0f2c1b; margin-top: 0; margin-bottom: 25px; font-weight:700;'>Iniciar Sesión</h2>", unsafe_allow_html=True)
+
+            pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
     
-    with col_logo1:
-        st.image("assets/logo_ucv.png", width=140)
-        
-    with col_titulo:
-        st.markdown("""
-        <h1 style='text-align:center; color:var(--text-color); font-size: 26px; margin-bottom:0; font-weight: bold;'>
-        Big Data Analitycs para el comportamiento de contaminantes del aire en Lima Metropolitana
-        </h1>
-        <h4 style='text-align:center; color:#0284c7; font-size: 16px; margin-top:5px; font-weight: 500;'>
-        Universidad César Vallejo - SENAMHI
-        </h4>
-        <br>
-        <h3 style='text-align: center; color: var(--text-color); font-size: 20px; margin-bottom: 5px;'>🔐 Inicio de Sesión</h3>
-        """, unsafe_allow_html=True)
-        
-    with col_logo2:
-        st.image("assets/logo_senamhi.png", width=140)
-   
-    st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 0px; margin-bottom: 25px;'>", unsafe_allow_html=True)
-
-
-    # Estilo de la caja flotante exclusiva para el formulario
-    st.markdown("""
-    <style>
-    [data-testid="stTabs"] {
-        background-color: var(--secondary-background-color);
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.35);
-        width: 100%;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    with col_login:
-        pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
-   
-        # --- PESTAÑA INICIAR SESIÓN ---
-        with pestana_login:
-            usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
-            clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
-            btn_ingresar = st.button("Ingresar al Portal", use_container_width=True, key="btn_ingresar_login")
-           
-            if btn_ingresar:
-                clave_login_encriptada = encriptar_clave(clave_login)
-                query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
-                usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
-               
-                if usuario_encontrado:
-                    st.session_state.logueado = True
-                    st.session_state.nombre_usuario = usuario_login
-                    st.rerun()
-                else:
-                    st.error("❌ Usuario, correo o contraseña incorrectos.")
-
-        # --- PESTAÑA REGISTRO SEGURO ---
-        with pestana_registro:
-            reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
-            reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
-            reg_clave = st.text_input("Contraseña Segura", type="password", help="Mínimo 8 caracteres", key="registro_input_clave")
-           
-            btn_registrar = st.button("Crear Cuenta Asegurada", use_container_width=True, key="btn_registrar_reg")
-           
-            if btn_registrar:
-                if not (reg_correo and reg_usuario and reg_clave):
-                    st.warning("⚠️ Todos los campos son obligatorios.")
-                elif not es_correo_valido(reg_correo):
-                    st.error("❌ El formato del correo electrónico no es válido.")
-                elif len(reg_clave) < 8:
-                    st.error("❌ Por seguridad, la contraseña debe tener al menos 8 caracteres.")
-                else:
-                    clave_encriptada = encriptar_clave(reg_clave)
-                    query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
-                    datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
-                   
-                    resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
-                    if resultado_reg == "duplicado":
-                        st.error("❌ El usuario o correo ya se encuentra registrado.")
-                    elif resultado_reg:
-                        st.success("🎉 ¡Cuenta creada con éxito! Pasa a la pestaña de Iniciar Sesión.")
+            # --- PESTAÑA INICIAR SESIÓN ---
+            with pestana_login:
+                usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
+                clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
+                btn_ingresar = st.button("Ingresar al Portal", use_container_width=True, key="btn_ingresar_login")
+            
+                if btn_ingresar:
+                    clave_login_encriptada = encriptar_clave(clave_login)
+                    query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
+                    usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
+                
+                    if usuario_encontrado:
+                        st.session_state.logueado = True
+                        st.session_state.nombre_usuario = usuario_login
+                        st.rerun()
                     else:
-                        st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
+                        st.error("❌ Usuario, correo o contraseña incorrectos.")
+
+            # --- PESTAÑA REGISTRO SEGURO ---
+            with pestana_registro:
+                reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
+                reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
+                reg_clave = st.text_input("Contraseña Segura", type="password", help="Mínimo 8 caracteres", key="registro_input_clave")
+            
+                btn_registrar = st.button("Crear Cuenta Asegurada", use_container_width=True, key="btn_registrar_reg")
+            
+                if btn_registrar:
+                    if not (reg_correo and reg_usuario and reg_clave):
+                        st.warning("⚠️ Todos los campos son obligatorios.")
+                    elif not es_correo_valido(reg_correo):
+                        st.error("❌ El formato del correo electrónico no es válido.")
+                    elif len(reg_clave) < 8:
+                        st.error("❌ Por seguridad, la contraseña debe tener al menos 8 caracteres.")
+                    else:
+                        clave_encriptada = encriptar_clave(reg_clave)
+                        query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
+                        datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
+                    
+                        resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
+                        if resultado_reg == "duplicado":
+                            st.error("❌ El usuario o correo ya se encuentra registrado.")
+                        elif resultado_reg:
+                            st.success("🎉 ¡Cuenta creada con éxito! Pasa a la pestaña de Iniciar Sesión.")
+                        else:
+                            st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
 
 # --- INTERFAZ 2: ENTORNO INTERNO DEL SOFTWARE (PANEL PRINCIPAL) ---
 else:
