@@ -138,7 +138,7 @@ if not st.session_state.logueado:
         # ==================== PRIMERA INTERFAZ ====================
 
         try:
-            fondo = obtener_imagen_base64("assets/fondo_inicio.jpg")
+            fondo = obtener_imagen_base64("assets/fondo_inicio.png")
             logo_ucv = obtener_imagen_base64("assets/logo_ucv.png")
             logo_senamhi = obtener_imagen_base64("assets/logo_senamhi.png")
         except FileNotFoundError:
