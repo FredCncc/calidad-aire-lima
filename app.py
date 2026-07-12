@@ -132,31 +132,67 @@ if not st.session_state.logueado:
         st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
         st.stop()
 
-    # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC ---
+        # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN FLOTANTE INTEGRADO) ---
     if not st.session_state.mostrando_formulario:
         presentacion_html = f"""
         <style>
         .stApp {{
             background: #0f172a !important;
         }}
-        .welcome-box {{
+        /* Contenedor relativo para que el botón flote encima */
+        .welcome-card {{
             max-width: 850px;
-            margin: 30px auto;
-            border-radius: 20px;
+            margin: 40px auto;
+            border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            position: relative; /* Clave para el posicionamiento del botón */
         }}
-        .welcome-box img {{
+        .welcome-card img {{
             width: 100%;
             display: block;
         }}
+        
+        /* Forzamos a que el contenedor del botón de Streamlit flote sobre la imagen */
+        .welcome-card div[data-testid="element-container"] {{
+            position: absolute !important;
+            bottom: 12px !important;   /* Posición vertical sobre la franja oscura */
+            right: 20px !important;    /* Lo pegamos al lado derecho */
+            width: 220px !important;   /* Un tamaño compacto y estético */
+            z-index: 999 !important;
+        }}
+        
+        /* Personalizamos el botón real para que sea verde y combine con tu diseño */
+        .welcome-card button {{
+            background-color: #10b981 !important; /* Verde corporativo */
+            color: white !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-weight: bold !important;
+            box-shadow: 0px 4px 15px rgba(16, 185, 129, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }}
+        
+        .welcome-card button:hover {{
+            background-color: #059669 !important; /* Verde más oscuro al pasar el mouse */
+            transform: scale(1.03) !important;
+        }}
+
         [data-testid="stHeader"], [data-testid="stSidebar"] {{ display: none !important; }}
         </style>
-        <div class="welcome-box">
+        
+        <div class="welcome-card">
             <img src="data:image/png;base64,{img_bienvenida}">
-        </div>
         """
         st.markdown(presentacion_html, unsafe_allow_html=True)
+        
+        # Este botón ahora se renderiza flotando mágicamente sobre la imagen en la esquina inferior derecha
+        if st.button("🚀 INGRESAR AL PORTAL", key="btn_ir_al_login"):
+            st.session_state.mostrando_formulario = True
+            st.rerun()
+            
+        st.markdown("</div>", unsafe_allow_html=True)
+
         
         # Botón responsivo centrado en la parte inferior para saltar al login
         _, col_btn_acceso, _ = st.columns([1, 2, 1])
