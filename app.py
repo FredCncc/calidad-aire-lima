@@ -139,7 +139,8 @@ if not st.session_state.logueado:
 
         [data-testid="stMainBlockContainer"] {{
             padding-top:20px;
-            max-width:100%;
+            max-width:900% !important;
+            margin:0 auto !important;
         }}
 
         .presentacion{{
@@ -163,10 +164,10 @@ if not st.session_state.logueado:
         }}
 
         .titulo{{
-            margin-top:60px;
-            font-size:58px;
+            margin-top:40px;
+            font-size:40px; 
             font-family:'Open Sans', sans-serif;
-            font-weight:1000;
+            font-weight:700;
             color:#07212b;
             line-height:1.15;
         }}
