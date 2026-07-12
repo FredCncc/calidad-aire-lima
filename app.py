@@ -166,7 +166,7 @@ if not st.session_state.logueado:
             margin-top:60px;
             font-size:58px;
             font-family:'Open Sans', sans-serif;
-            font-weight:700;
+            font-weight:1000;
             color:#07212b;
             line-height:1.15;
         }}
