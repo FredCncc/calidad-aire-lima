@@ -41,17 +41,12 @@ def es_correo_valido(correo):
     return re.match(patron, correo) is not None
 
 
-# --- CONEXIÓN A BASE DE DATOS ---
-# ==============================================================================
-# ==============================================================================
 # # --- CONEXIÓN CONFIGURADA PARA LA NUBE (SUPABASE) ---
-# ==============================================================================
 DB_HOST = "aws-1-us-east-2.pooler.supabase.com"
 DB_PORT = "6543"
 DB_NAME = "postgres"
 DB_USER = "postgres.mstdoqrqeuhghzohqdgy"
 DB_PASSWORD = st.secrets["DB_PASSWORD"]
-
 
 def ejecutar_consulta(query, datos=None, registrar=False):
     try:
@@ -109,11 +104,6 @@ def ejecutar_consulta(query, datos=None, registrar=False):
         if 'conexion' in locals():
             cursor.close()
             conexion.close()
-
-
-
-
-
 
 @st.cache_resource
 def obtener_imagen_base64(ruta_imagen):
