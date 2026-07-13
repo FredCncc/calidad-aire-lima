@@ -513,10 +513,166 @@ else:
     st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 10px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
     if opcion_modulo == "Panel General":
-        st.markdown("## 🌱 Panel Principal")
+        st.markdown("# 🌎 EcoWayraTec: Plataforma de Big Data Analitycs para la contaminación del aire en Lima Metropolitana")
         st.subheader(f"¡Bienvenido/a al Sistema, {st.session_state.nombre_usuario}!")
         st.write("Tu sesión está protegida. Utiliza el menú de la izquierda para navegar por las distintas vistas analíticas del proyecto.")
-    
+        st.markdown("<hr style='border: 0.5px solid rgba(128,128,128,0.2); margin-bottom: 25px;'>", unsafe_allow_html=True)
+
+         # BLOQUE 1: DIAGNÓSTICO DE LA PROBLEMÁTICA Y CONTEXTO
+        st.markdown("### 🚨 1. Diagnóstico de la Problemática y Contexto")
+        col_ctx1, col_ctx2, col_ctx3 = st.columns(3)
+        with col_ctx1:
+            st.markdown("""
+            <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
+                <h4 style='color: #0284c7; margin-top:0;'>🌐 Escenario Mundial (OMS)</h4>
+                <p style='font-size: 14px; text-align: justify;'>
+                Según la Organización Mundial de la Salud, el <b>99% de la población global</b> respira aire que supera los límites de seguridad. 
+                Es el mayor riesgo ambiental para la salud pública actual.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_ctx2:
+            st.markdown("""
+            <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
+                <h4 style='color: #e11d48; margin-top:0;'>🇵🇪 Tasa Nacional (Perú)</h4>
+                <p style='font-size: 14px; text-align: justify;'>
+                Perú suele liderar los rankings de peor calidad de aire en la región. 
+                Registramos promedios que superan hasta en <b>6 veces</b> los límites saludables recomendados internacionalmente.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_ctx3:
+            st.markdown("""
+            <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
+                <h4 style='color: #d97706; margin-top:0;'>🏙️ Situación Regional (Lima)</h4>
+                <p style='font-size: 14px; text-align: justify;'>
+                Lima Metropolitana sufre un "colchón de nubes" por su alta humedad. 
+                Esto atrapa los gases vehiculares a baja altura, convirtiéndola en una de las ciudades más densas en polución.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        # Recursos visuales del contexto
+        col_media1, col_media2 = st.columns([1.2, 1])
+        
+        with col_media1:
+            # Enlace directo a un video oficial, educativo y libre de plagio de la OPS/OMS
+            st.markdown("<p style='font-weight: bold; margin-bottom: 5px;'>🎥 Evidencia Científica Internacional:</p>", unsafe_allow_html=True)
+            st.video("https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-")
+            st.caption("Video Educativo: El impacto de la contaminación en la salud. Fuente: Organización Panamericana de la Salud (OPS/OMS).")
+        
+        with col_media2:
+            # 📂 INSTRUCCIÓN DE IMAGEN PARA EL ALUMNO:
+            # Busca en Google una foto del cielo gris/smog de Lima, guárdala como 'lima_smog.png' dentro de tu carpeta 'assets/'
+            try:
+                st.image("assets/lima_smog.png", caption="Saturación por Smog Urbano en Lima Metropolitana. Fuente: Monitoreo Ambiental Local.", use_container_width=True)
+            except FileNotFoundError:
+                # Imagen de respaldo automática si aún no creas la carpeta o el archivo
+                st.image("https://media.istockphoto.com/id/886582700/photo/aerial-view-of-cityscape-of-lima-peru.jpg?s=2048x2048&w=is&k=20&c=dl5FJaXaW3u22JDLvjz1zv1ctLm8U0fRNruIZGF2GG4=", caption="[Respaldo] Contaminación en zonas urbanas densas. (Cámbiala guardando tu foto en assets/lima_smog.png)", use_container_width=True)
+        
+        st.markdown("<br><hr style='border: 0.5px solid rgba(128,128,128,0.1);'>", unsafe_allow_html=True)
+        # BLOQUE 2: ANÁLISIS DE CONTAMINANTES - PARTE A: PM2.5
+        st.markdown("### 📊 2. Matriz de Variables Atmosféricas Monitoreadas")
+        st.write("Definición analítica y caracterización biológica de los agentes químicos registrados en el Data Mart:")
+
+        st.markdown("#### 🟥 A. Material Particulado Fino (PM₂.₅)")
+        col_pm25_txt, col_pm25_img = st.columns([1.2, 1])
+
+        with col_pm25_txt:
+            st.markdown("""
+            <p style='text-align: justify; font-size: 15px;'>
+            <b>🔍 Descubriendo las Fuentes de PM₂.₅: ¿De Dónde Proviene?</b>
+            <br>
+            Las partículas PM₂.₅, con un diámetro de 2.5 micrómetros o menos, son aproximadamente <b>30 veces más pequeñas que un cabello humano</b>. 
+            Esto las convierte en una amenaza significativa, aunque a menudo no visible, para la calidad del aire de Lima Metropolitana. 
+            <br><br>
+            Su origen principal proviene de la combustión interna de motores diésel del transporte público, la quema de aceites industriales 
+            y los procesos de fundición pesada.
+            <br><br>
+            <b>⚠️ Consecuencias Clínicas Críticas:</b>
+            <br>
+            Debido a su escala submicroscópica, burlan con facilidad los filtros biológicos de las fosas nasales. Ingresan directamente a la zona alveolar de los pulmones 
+            y se filtran al torrente sanguíneo. Esto incrementa de forma exponencial los casos de infartos cardíacos, accidentes cerebrovasculares (ACV) y mutaciones celulares que derivan en cáncer pulmonar.
+            </p>
+            """, unsafe_allow_html=True)
+        with col_pm25_img:
+            # 📂 INSTRUCCIÓN DE IMAGEN PARA EL ALUMNO:
+            # Toma una captura al gráfico de AQI.in que muestra las barras de enfermedades ("Porcentaje de muertes según enfermedades").
+            # Guárdala con el nombre 'mortalidad_aqi.png' dentro de tu carpeta 'assets/'
+            try:
+                st.image("assets/mortalidad_aqi.png", caption="Porcentaje de mortalidad según patologías crónicas vinculadas a la exposición de PM2.5. Fuente: AQI.in", use_container_width=True)
+            except FileNotFoundError:
+                # Imagen de respaldo educativa de la PUCP sobre contaminación de PM2.5 en Lima por distritos
+                st.image("https://files.pucp.education/puntoedu/wp-content/uploads/2024/04/17181908/graficas-contaminacion-aire-1-1-1024x907.jpg", caption="[Respaldo] Concentración de PM2.5 por distritos en Lima. (Cámbiala guardando tu gráfico en assets/mortalidad_aqi.png)", use_container_width=True)
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        # BLOQUE 3: ANÁLISIS DE CONTAMINANTES - PARTE B: PM10 Y NO2
+        col_pm10, col_no2 = st.columns(2)
+        with col_pm10:
+            st.markdown("""
+            <div style='background-color: rgba(245, 158, 11, 0.06); padding: 22px; border-radius: 12px; border-left: 5px solid #f59e0b; height: 350px;'>
+                <h4 style='color: #f59e0b; margin-top:0;'>🌫️ B. Material Particulado Grueso (PM₁₀)</h4>
+                <p style='font-size: 14px; text-align: justify;'>
+                <b>🔍 Fuentes de PM₁₀: ¿De Dónde Proviene?</b><br>
+                Son partículas mecánicas con un diámetro entre 2.5 y 10 micrómetros. Se originan principalmente por la fricción de los neumáticos y pastillas de freno contra el asfalto, polvo vial resuspendido por los vientos y actividades de construcción civil pesada.
+                <br><br>
+                <b>⚠️ Consecuencias Clínicas:</b><br>
+                Al ser más grandes, quedan atrapadas en la zona superior del sistema respiratorio. Son las causantes directas de crisis agudas de asma, rinitis alérgica severa, obstrucción pulmonar y bronquitis obstructiva recurrente en niños y ancianos.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_no2:
+            st.markdown("""
+            <div style='background-color: rgba(59, 130, 246, 0.06); padding: 22px; border-radius: 12px; border-left: 5px solid #3b82f6; height: 350px;'>
+                <h4 style='color: #3b82f6; margin-top:0;'>🚗 C. Dióxido de Nitrógeno (NO₂)</h4>
+                <p style='font-size: 14px; text-align: justify;'>
+                <b>🔍 Descubriendo las Fuentes de NO₂: ¿De Dónde Proviene?</b><br>
+                Es un gas altamente tóxico y reactivo generado por las altas temperaturas de combustión en los motores a gasolina del tráfico vehicular denso y centrales generadoras de energía.
+                <br><br>
+                <b>🌡️ Impacto Térmico y Visual Atmosférico:</b><br>
+                ¿Sabías que el NO₂ puede crear visibilidad atmosférica reducida y aumentar el calor atmosférico? Esto sucede porque sus concentraciones <b>absorben la radiación visible</b> en la atmósfera, originando la densa capa marrón (smog fotoquímico) sobre Lima y alterando el microclima urbano.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown("<br><hr style='border: 0.5px solid rgba(128,128,128,0.1);'>", unsafe_allow_html=True)
+
+        # BLOQUE 4: ARQUITECTURA Y ENFOQUE TECNOLÓGICO
+        st.markdown("### 🛠️ 3. Infraestructura de Big Data Analytics y Ciencia de Datos")
+        st.markdown("""
+        <p style='text-align: justify; font-size: 15px;'>
+        Para resolver la dispersión de los datos abiertos y la ineficiencia de procesar archivos planos manuales (CSV), 
+        nuestro ecosistema implementa una solución de software estructurada en tres capas analíticas de alto rendimiento:
+        </p>
+        """, unsafe_allow_html=True)
+        
+        col_tec1, col_tec2 = st.columns([1.2, 1])
+
+        with col_tec1:
+            st.markdown("""
+            <ul style='font-size: 14.5px; line-height: 1.6;'>
+                <li><b>Ingeniería de Datos (ETL):</b> Flujos programados en SQL Server / SSIS que automatizan la extracción masiva, limpieza de registros nulos y ejecutan un <i>pivote inverso (Unpivot)</i> para normalizar los contaminantes en métricas estructuradas.</li>
+                <li><b>Almacenamiento Multidimensional:</b> Diseño de un <b>Data Mart</b> bajo un esquema estrella optimizado, interconectando la tabla de hechos con dimensiones temporales, horarias y geográficas para consultas analíticas veloces.</li>
+                <li><b>Ciencia de Datos Avanzada:</b> Capa de analítica descriptiva y predictiva integrada mediante visualizaciones interactivas, aplicando análisis correlacionales y modelos de aprendizaje supervisado para predecir picos de contaminación futura.</li>
+            </ul>
+            """, unsafe_allow_html=True)
+
+        with col_tec2:
+            # 📂 INSTRUCCIÓN: Guarda esta imagen de la arquitectura híbrida en tu carpeta assets/ con el nombre exacto de 'arquitectura_cloud.png'
+            st.image(
+                "assets/arquitectura_cloud.png", 
+                caption="Arquitectura de Big Data Cloud para la implementación del Software de analítica ambiental.", 
+                use_container_width=True
+            )
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info("💡 **Impacto Estratégico:** Al unificar el análisis macro, la clasificación química " \
+        "de contaminantes y las predicciones algorítmicas, este software provee un marco científico robusto " \
+        "indispensable para el diseño de políticas urbanas basadas en datos.")
+
+
+    #modulo1
     elif opcion_modulo == "1. Dashboard Espacial":
         st.markdown("### 📍 ESTADO ACTUAL Y MONITOREO GEOGRÁFICO")
         url_espacial = "https://datastudio.google.com/embed/reporting/334f6c3b-644d-4248-9e3b-3b4d99fbcf5b/page/tEnnC"
