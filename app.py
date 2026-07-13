@@ -649,9 +649,72 @@ else:
     st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 10px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
 
+    st.markdown("""
+<style>
+
+/* Hace que todo el contenido se adapte al ancho */
+.block-container{
+    max-width:100%;
+    padding-top:1rem;
+    padding-left:2rem;
+    padding-right:2rem;
+}
+
+/* Titulos responsivos */
+.titulo-principal{
+    font-size:clamp(1.8rem,3vw,3rem);
+    font-weight:700;
+}
+
+.subtitulo-panel{
+    font-size:clamp(1rem,1.4vw,1.3rem);
+}
+
+/* Texto */
+.texto-panel{
+    font-size:clamp(14px,1vw,18px);
+    text-align:justify;
+    line-height:1.8;
+}
+
+/* Tarjetas */
+.card-panel{
+    padding:22px;
+    border-radius:15px;
+    background:var(--secondary-background-color);
+    border:1px solid rgba(180,180,180,.25);
+    height:100%;
+}
+
+/* Video */
+video{
+    border-radius:15px;
+}
+
+/* Imágenes */
+img{
+    border-radius:15px;
+}
+
+/* Responsive */
+@media(max-width:900px){
+
+.card-panel{
+    margin-bottom:20px;
+}
+
+}
+
+</style>
+""",unsafe_allow_html=True)
+
     # 3. CONTROL DE VISTAS SEGÚN EL BOTÓN SELECCIONADO (Corregidos para coincidir con tus Options exactamente)
     if opcion_modulo == "Panel General":
-        st.markdown("# 🌎 EcoWayraTec: Plataforma de Big Data Analitycs para la contaminación del aire en Lima Metropolitana")
+        st.markdown("""
+<div class='titulo-principal'>
+🌎 EcoWayraTec: Plataforma de Big Data Analytics para la contaminación del aire en Lima Metropolitana
+</div>
+""",unsafe_allow_html=True)
         st.subheader(f"¡Bienvenido/a al Sistema, {st.session_state.nombre_usuario}!")
         st.write("Tu sesión está protegida. Utiliza el menú de la izquierda para navegar por las distintas vistas analíticas del proyecto.")
         st.markdown("<hr style='border: 0.5px solid rgba(128,128,128,0.2); margin-bottom: 25px;'>", unsafe_allow_html=True)
