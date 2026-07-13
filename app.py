@@ -714,7 +714,7 @@ img{
     if opcion_modulo == "Panel General":
         st.markdown("""
 <div class='titulo-principal'>
-🌎 EcoWayraTec: Plataforma de Big Data Analytics para la contaminación del aire en Lima Metropolitana
+🌎 EcoWayraTec
 </div>
 """,unsafe_allow_html=True)
         st.subheader(f"¡Bienvenido/a al Sistema, {st.session_state.nombre_usuario}!")
@@ -769,7 +769,7 @@ img{
                 "https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-"
             )
 
-            st.caption("Fuente: OPS/OMS")
+            st.caption("Fuente: EL IMPACTO DE LA CONTAMINACIÓN EN TU SALUD - Visión Salud Pública | Reportaje 04 | ESPM/INSP")
 
         with col_media2:
 
@@ -793,7 +793,7 @@ img{
         with col_pm25_txt:
             st.markdown("""
             <p style='text-align: justify; font-size: 15px;'>
-            <b>🔍 Descubriendo las Fuentes de PM₂.₅: ¿De Dónde Proviene?</b>
+            <b>🔍 Descubriendo las Fuentes de AQI.in: ¿De Dónde Proviene?</b>
             <br>
             Las partículas PM₂.₅, con un diámetro de 2.5 micrómetros o menos, son aproximadamente <b>30 veces más pequeñas que un cabello humano</b>.
             Esto las convierte en una amenaza significativa, aunque a menudo no visible, para la calidad del aire de Lima Metropolitana.
@@ -812,7 +812,7 @@ img{
             # Toma una captura al gráfico de AQI.in que muestra las barras de enfermedades ("Porcentaje de muertes según enfermedades").
             # Guárdala con el nombre 'mortalidad_aqi.png' dentro de tu carpeta 'assets/'
             try:
-                st.image("assets/mortalidad_aqi.png", caption="Porcentaje de mortalidad según patologías crónicas vinculadas a la exposición de PM2.5. Fuente: AQI.in", use_container_width=True)
+                st.image("assets/mortalidad_aqi.png", caption="Porcentaje de mortalidad según patologías crónicas vinculadas a la exposición de PM2.5. Fuente: UNEP", use_container_width=True)
             except FileNotFoundError:
                 # Imagen de respaldo educativa de la PUCP sobre contaminación de PM2.5 en Lima por distritos
                 st.image("https://files.pucp.education/puntoedu/wp-content/uploads/2024/04/17181908/graficas-contaminacion-aire-1-1-1024x907.jpg", caption="[Respaldo] Concentración de PM2.5 por distritos en Lima. (Cámbiala guardando tu gráfico en assets/mortalidad_aqi.png)", use_container_width=True)
@@ -825,7 +825,7 @@ img{
             <div style='background-color: rgba(245, 158, 11, 0.06); padding: 22px; border-radius: 12px; border-left: 5px solid #f59e0b; height: 350px;'>
                 <h4 style='color: #f59e0b; margin-top:0;'>🌫️ B. Material Particulado Grueso (PM₁₀)</h4>
                 <p style='font-size: 14px; text-align: justify;'>
-                <b>🔍 Fuentes de PM₁₀: ¿De Dónde Proviene?</b><br>
+                <b>🔍 Fuentes de AQI.in ¿De Dónde Proviene?</b><br>
                 Son partículas mecánicas con un diámetro entre 2.5 y 10 micrómetros. Se originan principalmente por la fricción de los neumáticos y pastillas de freno contra el asfalto, polvo vial resuspendido por los vientos y actividades de construcción civil pesada.
                 <br><br>
                 <b>⚠️ Consecuencias Clínicas:</b><br>
@@ -839,7 +839,7 @@ img{
             <div style='background-color: rgba(59, 130, 246, 0.06); padding: 22px; border-radius: 12px; border-left: 5px solid #3b82f6; height: 350px;'>
                 <h4 style='color: #3b82f6; margin-top:0;'>🚗 C. Dióxido de Nitrógeno (NO₂)</h4>
                 <p style='font-size: 14px; text-align: justify;'>
-                <b>🔍 Descubriendo las Fuentes de NO₂: ¿De Dónde Proviene?</b><br>
+                <b>🔍 Descubriendo las Fuentes de AQI.in: ¿De Dónde Proviene?</b><br>
                 Es un gas altamente tóxico y reactivo generado por las altas temperaturas de combustión en los motores a gasolina del tráfico vehicular denso y centrales generadoras de energía.
                 <br><br>
                 <b>🌡️ Impacto Térmico y Visual Atmosférico:</b><br>
