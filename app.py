@@ -211,8 +211,8 @@ if not st.session_state.logueado:
 
 
         .titulo{{
-            margin-top:60px;
-            font-size:58px;
+            margin-top:20px;
+            font-size:clamp(38px,4vw,58px);
             font-weight:800;
             color:#0f172a;
             line-height:1.15;
@@ -220,10 +220,11 @@ if not st.session_state.logueado:
 
 
         .subtitulo{{
-            font-size:34px;
+            font-size:clamp(24px,2vw,34px);
             color:#188038;
             font-weight:bold;
-            margin-top:10px;
+            margin-top:8px;
+            font-weight:700;
         }}
 
 
@@ -257,8 +258,8 @@ if not st.session_state.logueado:
         <div class="titulo">
 
 
-        Monitoreo Inteligente<br>
-        de la Calidad del Aire
+        Big data analitycs para el comportamiento <br>
+        de contaminantes del aire en
 
 
         </div>
@@ -370,7 +371,7 @@ if not st.session_state.logueado:
             <div class="panel-izquierdo-text">
                 <h1>Bienvenido de nuevo 🍃</h1>
                 <p>Ingresa a tu cuenta para continuar monitoreando la calidad del aire en Lima Metropolitana.</p>
-                <div class="item-info"><span class="icon-box">📈</span> Información en tiempo real</div>
+                <div class="item-info"><span class="icon-box">📈</span> Información reales de datos</div>
                 <div class="item-info"><span class="icon-box">📊</span> Datos confiables y actualizados</div>
                 <div class="item-info"><span class="icon-box">📋</span> Decisiones basadas en evidencia</div>
             </div>
@@ -757,31 +758,27 @@ img{
 
         st.markdown("<br>", unsafe_allow_html=True)
         # Recursos visuales del contexto
-        col_media1, col_media2 = st.columns(
-            [1.2, 1],
-            gap="large"
-        )         
+        col_media1, col_media2 = st.columns([0.9,1.3], gap="large")
+
         with col_media1:
 
-             st.markdown("#### 🎥 Evidencia Científica Internacional")
+            st.markdown("#### 🎥 Evidencia Científica Internacional")
 
-             st.video(
-                 "https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-"
-             )
+            st.video(
+                "https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-"
+            )
 
-             st.caption(
-             "Fuente: Organización Panamericana de la Salud (OPS/OMS)"
-             )
-       
+            st.caption("Fuente: OPS/OMS")
+
         with col_media2:
-            # 📂 INSTRUCCIÓN DE IMAGEN PARA EL ALUMNO:
-            # Busca en Google una foto del cielo gris/smog de Lima, guárdala como 'lima_smog.png' dentro de tu carpeta 'assets/'
-            try:
-                st.image("assets/lima_smog.png", caption="Saturación por Smog Urbano en Lima Metropolitana. Fuente: Monitoreo Ambiental Local.", use_container_width=True)
-            except FileNotFoundError:
-                # Imagen de respaldo automática si aún no creas la carpeta o el archivo
-                st.image("https://media.istockphoto.com/id/886582700/photo/aerial-view-of-cityscape-of-lima-peru.jpg?s=2048x2048&w=is&k=20&c=dl5FJaXaW3u22JDLvjz1zv1ctLm8U0fRNruIZGF2GG4=", caption="[Respaldo] Contaminación en zonas urbanas densas. (Cámbiala guardando tu foto en assets/lima_smog.png)", use_container_width=True)
-       
+
+            st.image(
+                "assets/lima_smog.png",
+                caption="Saturación por Smog Urbano en Lima Metropolitana. Fuente: Monitoreo Ambiental Local.",
+                use_container_width=True
+            )
+
+
         st.markdown("<br><hr style='border: 0.5px solid rgba(128,128,128,0.1);'>", unsafe_allow_html=True)
         # BLOQUE 2: ANÁLISIS DE CONTAMINANTES - PARTE A: PM2.5
         st.markdown("### 📊 2. Matriz de Variables Atmosféricas Monitoreadas")
