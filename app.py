@@ -5,10 +5,12 @@ import re  # Librería nativa de Python para validar correos
 import hashlib
 from streamlit_option_menu import option_menu  # Requrequiere: pip install streamlit-option-menu
 
+
 # --- FUNCIÓN DE ENCRIPTACIÓN ---
 def encriptar_clave(clave):
     # Transforma la contraseña en un hash irreversible SHA-256 por seguridad
     return hashlib.sha256(clave.encode()).hexdigest()
+
 
 # Configurar la página de Streamlit
 st.set_page_config(page_title="EcoWayraTec", page_icon="🌎", layout="wide")
@@ -30,23 +32,41 @@ st.markdown(
 )
 
 
+
+
+# --- FUNCIÓN DE VALIDACIÓN DE CORREO ---
 def es_correo_valido(correo):
+    # Verifica si el texto tiene estructura de correo real (ejemplo@dominio.com)
     patron = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     return re.match(patron, correo) is not None
 
+
+# --- CONEXIÓN A BASE DE DATOS ---
+# ==============================================================================
+# ==============================================================================
+# # --- CONEXIÓN CONFIGURADA PARA LA NUBE (SUPABASE) ---
+# ==============================================================================
 DB_HOST = "aws-1-us-east-2.pooler.supabase.com"
 DB_PORT = "6543"
 DB_NAME = "postgres"
 DB_USER = "postgres.mstdoqrqeuhghzohqdgy"
 DB_PASSWORD = st.secrets["DB_PASSWORD"]
 
+
 def ejecutar_consulta(query, datos=None, registrar=False):
     try:
+        # AQUÍ ESTÁ EL ARREGLO: Pasamos las variables explícitas que definiste arriba
         conexion = psycopg2.connect(
-            host=DB_HOST, port=DB_PORT, database=DB_NAME,
-            user=DB_USER, password=DB_PASSWORD, sslmode="require"
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            sslmode="require"
         )
         cursor = conexion.cursor()
+       
+        # Crear tabla si no existe
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id SERIAL PRIMARY KEY,
@@ -56,23 +76,30 @@ def ejecutar_consulta(query, datos=None, registrar=False):
         );
         """)
         conexion.commit()
+
+
+        # Insertar administrador por defecto de respaldo
         clave_admin_encriptada = encriptar_clave("admin1234")
         cursor.execute("""
-            INSERT INTO usuarios (correo, usuario, clave) 
-            VALUES (%s, %s, %s) 
+            INSERT INTO usuarios (correo, usuario, clave)
+            VALUES (%s, %s, %s)
             ON CONFLICT (usuario) DO NOTHING;
         """, ("admin@sistema.com", "admin", clave_admin_encriptada))
         conexion.commit()
+       
+        # Ejecutar la consulta recibida
         if datos:
             query_adaptada = query.replace("?", "%s")
             cursor.execute(query_adaptada, datos)
         else:
             cursor.execute(query)
+       
         if registrar:
             conexion.commit()
             return True
         else:
             return cursor.fetchall()
+           
     except psycopg2.errors.UniqueViolation:
         return "duplicado"
     except Exception as e:
@@ -84,20 +111,31 @@ def ejecutar_consulta(query, datos=None, registrar=False):
             conexion.close()
 
 
+
+
+
+
 @st.cache_resource
 def obtener_imagen_base64(ruta_imagen):
     with open(ruta_imagen, "rb") as image_file:
         datos = image_file.read()
         return base64.b64encode(datos).decode()
 
+
+# --- MANEJO DE SESIÓN ---
 if "logueado" not in st.session_state:
     st.session_state.logueado = False
 if "nombre_usuario" not in st.session_state:
     st.session_state.nombre_usuario = ""
 
+
+# --- INTERFAZ 1: CAJA FLOTANTE DE LOGIN / REGISTRO ---
 if not st.session_state.logueado:
+   
+    # Inicializamos la variable de control si no existe
     if "mostrando_formulario" not in st.session_state:
         st.session_state.mostrando_formulario = False
+
 
     # Carga segura de tus nuevas imágenes corporativas
     try:
@@ -107,10 +145,13 @@ if not st.session_state.logueado:
         st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
         st.stop()
 
+
         # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN SUPERIOR INDEPENDIENTE) ---
     if not st.session_state.mostrando_formulario:
 
+
         # ==================== PRIMERA INTERFAZ ====================
+
 
         try:
             fondo = obtener_imagen_base64("assets/fondo_inicio.png")
@@ -120,10 +161,10 @@ if not st.session_state.logueado:
             st.error("No se encontraron las imágenes en la carpeta assets.")
             st.stop()
 
+
         st.markdown(f"""
         <style>
 
-        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
 
         .stApp {{
             background-image:
@@ -131,22 +172,25 @@ if not st.session_state.logueado:
                 rgba(255,255,255,0.18)),
                 url("data:image/jpg;base64,{fondo}");
 
+
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
 
+
         [data-testid="stMainBlockContainer"] {{
             padding-top:20px;
-            max-width:900% !important;
-            margin:0 auto !important;
+            max-width:100%;
         }}
+
 
         .presentacion{{
             width:100%;
             text-align:center;
         }}
+
 
         .logos{{
             display:flex;
@@ -155,82 +199,104 @@ if not st.session_state.logueado:
             padding:20px 60px;
         }}
 
+
         .logo-ucv{{
             width:180px;
         }}
+
 
         .logo-senamhi{{
             width:180px;
         }}
 
+
         .titulo{{
-            margin-top:40px;
-            font-size:40px; 
-            font-family:'Open Sans', sans-serif;
-            font-weight:700;
-            color:#07212b;
+            margin-top:60px;
+            font-size:58px;
+            font-weight:800;
+            color:#0f172a;
             line-height:1.15;
         }}
 
+
         .subtitulo{{
             font-size:34px;
-            font-family:'Open Sans', sans-serif;
-            font-weight:400;
-            color:#2c7545;
+            color:#188038;
+            font-weight:bold;
             margin-top:10px;
         }}
+
 
         .descripcion{{
             margin-top:30px;
             font-size:21px;
-            font-family:'Open Sans', sans-serif;
-            font-weight:400;
-            color:#0c212c;
+            color:#374151;
         }}
+
 
         </style>
 
+
         <div class="presentacion">
 
+
         <div class="logos">
+
 
         <img class="logo-ucv"
         src="data:image/png;base64,{logo_ucv}">
 
+
         <img class="logo-senamhi"
         src="data:image/png;base64,{logo_senamhi}">
 
+
         </div>
 
+
         <div class="titulo">
+
 
         Monitoreo Inteligente<br>
         de la Calidad del Aire
 
+
         </div>
+
 
         <div class="subtitulo">
 
+
         Lima Metropolitana
+
 
         </div>
 
+
         <div class="descripcion">
+
 
         Plataforma de análisis y visualización de contaminantes
         atmosféricos para la toma de decisiones informadas.
 
-        </div>
 
         </div>
+
+
+        </div>
+
 
         """, unsafe_allow_html=True)
 
+
         st.markdown("<br><br><br>", unsafe_allow_html=True)
+
 
         c1,c2,c3=st.columns([2,1,2])
 
+
         with c2:
+
 
             if st.button(
                 "🔐 Iniciar Sesión",
@@ -238,21 +304,27 @@ if not st.session_state.logueado:
                 key="btn_inicio"
             ):
 
+
                 st.session_state.mostrando_formulario=True
                 st.rerun()
 
+
+    #------------------------------------------------------------------------------------------------
+
+
+    # --- SUB-PANTALLA B: MODULO DE INICIO DE SESIÓN EN DOS COLUMNAS ---
     else:
         login_styles = f"""
         <style>
         /* Imagen de fondo difuminada de Lima de Noche */
         .stApp {{
-            background-image: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)), 
+            background-image: linear-gradient(rgba(0,0,0,0.52), rgba(0,0,0,0.52)),
                               url('data:image/png;base64,{img_fondo_login}') !important;
             background-size: cover !important;
             background-position: center !important;
             background-attachment: fixed !important;
         }}
-        
+       
         /* Contenedor maestro que unifica las dos columnas de Streamlit */
         [data-testid="stHorizontalBlock"] {{
             max-width: 1000px;
@@ -263,36 +335,36 @@ if not st.session_state.logueado:
             overflow: hidden;
             gap: 0px !important;
         }}
-        
+       
         /* Panel Informativo Izquierdo (Verde Premium) */
         [data-testid="stHorizontalBlock"] > div:nth-child(1) {{
             background: linear-gradient(135deg, #0f2c1b, #1b442b) !important;
             padding: 55px 45px !important;
             color: #ffffff !important;
         }}
-        
+       
         /* Panel del Formulario Derecho (Blanco Puro) */
         [data-testid="stHorizontalBlock"] > div:nth-child(2) {{
             background: #ffffff !important;
             padding: 55px 45px !important;
         }}
-        
+       
         /* Formateo de los textos del panel izquierdo */
         .panel-izquierdo-text h1 {{ color: #ffffff !important; font-size: 32px; font-weight: 700; margin-bottom: 15px; }}
         .panel-izquierdo-text p {{ color: #cbd5e1 !important; font-size: 15px; margin-bottom: 35px; opacity: 0.95; }}
         .item-info {{ display: flex; align-items: center; margin-bottom: 22px; font-size: 14px; font-weight: 500; color: #ffffff !important; }}
         .icon-box {{ background: rgba(255,255,255,0.18); padding: 8px 12px; border-radius: 50%; margin-right: 15px; }}
-        
+       
         /* Forzar color oscuro para los textos de los inputs en el formulario blanco */
         [data-testid="stHorizontalBlock"] label {{ color: #1e293b !important; font-weight: 600; }}
         [data-testid="stHeader"] {{ display: none !important; }}
         </style>
         """
         st.markdown(login_styles, unsafe_allow_html=True)
-        
+       
         # Declaramos las dos columnas nativas distribuidas
         col_izq, col_der = st.columns([1.1, 1])
-        
+       
         with col_izq:
             st.markdown("""
             <div class="panel-izquierdo-text">
@@ -303,7 +375,7 @@ if not st.session_state.logueado:
                 <div class="item-info"><span class="icon-box">📋</span> Decisiones basadas en evidencia</div>
             </div>
             """, unsafe_allow_html=True)
-            
+           
         with col_der:
              # Botón de escape para volver a la pantalla de la primera imagen
             st.markdown("<hr style='border: 0.5px solid #e2e8f0; margin: 20px 0;'>", unsafe_allow_html=True)
@@ -311,21 +383,23 @@ if not st.session_state.logueado:
                 st.session_state.mostrando_formulario = False
                 st.rerun()
 
+
             st.markdown("<h2 style='text-align: center; color: #0f2c1b; margin-top: 0; margin-bottom: 25px; font-weight:700;'>Iniciar Sesión</h2>", unsafe_allow_html=True)
 
+
             pestana_login, pestana_registro = st.tabs(["🔑 Iniciar Sesión", "📝 Registrarse"])
-    
+   
             # --- PESTAÑA INICIAR SESIÓN ---
             with pestana_login:
                 usuario_login = st.text_input("Usuario o Correo", key="login_input_usuario")
                 clave_login = st.text_input("Contraseña", type="password", key="login_input_clave")
                 btn_ingresar = st.button("Ingresar al Portal", use_container_width=True, key="btn_ingresar_login")
-            
+           
                 if btn_ingresar:
                     clave_login_encriptada = encriptar_clave(clave_login)
                     query = "SELECT usuario FROM usuarios WHERE (usuario = %s OR correo = %s) AND clave = %s"
                     usuario_encontrado = ejecutar_consulta(query, (usuario_login, usuario_login, clave_login_encriptada))
-                
+               
                     if usuario_encontrado:
                         st.session_state.logueado = True
                         st.session_state.nombre_usuario = usuario_login
@@ -333,14 +407,15 @@ if not st.session_state.logueado:
                     else:
                         st.error("❌ Usuario, correo o contraseña incorrectos.")
 
+
             # --- PESTAÑA REGISTRO SEGURO ---
             with pestana_registro:
                 reg_correo = st.text_input("Correo Electrónico (Ej: usuario@gmail.com)", key="registro_input_correo")
                 reg_usuario = st.text_input("Nombre de Usuario único", key="registro_input_usuario")
                 reg_clave = st.text_input("Contraseña Segura", type="password", help="Mínimo 8 caracteres", key="registro_input_clave")
-            
+           
                 btn_registrar = st.button("Crear Cuenta Asegurada", use_container_width=True, key="btn_registrar_reg")
-            
+           
                 if btn_registrar:
                     if not (reg_correo and reg_usuario and reg_clave):
                         st.warning("⚠️ Todos los campos son obligatorios.")
@@ -352,7 +427,7 @@ if not st.session_state.logueado:
                         clave_encriptada = encriptar_clave(reg_clave)
                         query = "INSERT INTO usuarios (correo, usuario, clave) VALUES (%s, %s, %s)"
                         datos_nuevos = (reg_correo, reg_usuario, clave_encriptada)
-                    
+                   
                         resultado_reg = ejecutar_consulta(query, datos_nuevos, registrar=True)
                         if resultado_reg == "duplicado":
                             st.error("❌ El usuario o correo ya se encuentra registrado.")
@@ -361,13 +436,18 @@ if not st.session_state.logueado:
                         else:
                             st.error("❌ Ocurrió un error inesperado al registrar en la base de datos.")
 
+
+# --- INTERFAZ 2: ENTORNO INTERNO DEL SOFTWARE (PANEL PRINCIPAL) ---
 else:
     import pandas as pd  # Para estructurar las tablas del diccionario de datos
-    import sqlite3
     import base64
 
+
+    # --- FORZAR REGISTRO DEL ADMIN (CORREGIDO Y ENCRIPTADO) ---
     try:
+        # Encriptamos la clave primero para que coincida con el sistema de login
         clave_admin_encriptada = encriptar_clave("AdminCalidadAire2026")
+       
         conexion_directa = sqlite3.connect("usuarios.db")
         cursor_directo = conexion_directa.cursor()
         cursor_directo.execute(
@@ -379,59 +459,84 @@ else:
     except Exception as e:
         pass
 
-    ruta_del_svg = "assets/peru.svg"
-    try:
-        svg_codificado = obtener_imagen_base64(ruta_del_svg)
-        estilos_fondo_sistema = f"""
-        <style>
-        .stApp {{ 
-            background: var(--background-color) !important;
-        }}
-        .stApp::before {{
-            content: ""; 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 300px;
-            background-image: url("data:image/svg+xml;base64,{svg_codificado}");
-            background-repeat: no-repeat; 
-            background-position: center bottom; 
-            background-size: contain;
-            opacity: 0.15;
-            pointer-events: none; 
-            z-index: 0;
-        }}
-        [data-testid="stMainBlockContainer"] h1,
-        [data-testid="stMainBlockContainer"] h2,
-        [data-testid="stMainBlockContainer"] h3,
-        [data-testid="stMainBlockContainer"] h4,
-        [data-testid="stMainBlockContainer"] h5,
-        [data-testid="stMainBlockContainer"] p,
-        [data-testid="stMainBlockContainer"] span,
-        [data-testid="stMainBlockContainer"] label {{
-            position: relative; 
-            z-index: 1;
-        }}
-        </style>
-        """
-        st.markdown(estilos_fondo_sistema, unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning("⚠️ No se encontró la silueta en assets/peru.svg.")
 
+   # BLOQUE DEL COLOR DE FONDO DE PERU.SVG
+    else:
+        import pandas as pd
+        import sqlite3
+        import base64
+
+
+        # 🎨 CONFIGURACIÓN DE INTERFAZ PREMIUM (ESTILO AQI.IN)
+        ruta_del_svg = "assets/peru.svg"
+       
+        try:
+            svg_codificado = obtener_imagen_base64(ruta_del_svg)
+            estilos_fondo_sistema = f"""
+            <style>
+            /* 1. Fondo base: usa el color de fondo del tema activo (claro u oscuro) */
+            .stApp {{
+                background: var(--background-color) !important;
+            }}
+           
+            /* 2. Silueta de Perú fijada perfectamente en la parte inferior del fondo */
+            .stApp::before {{
+                content: "";
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 300px; /* Controla la altura de la silueta en la pantalla */
+                background-image: url("data:image/svg+xml;base64,{svg_codificado}");
+                background-repeat: no-repeat;
+                background-position: center bottom;
+                background-size: contain; /* Ajusta la silueta horizontalmente de forma limpia */
+                opacity: 0.15; /* Opacidad sutil estilo marca de agua para que no sature tus reportes */
+                pointer-events: none;
+                z-index: 0;
+            }}
+           
+            /* 3. El texto ya adopta el color correcto del tema activo de Streamlit por defecto;
+                  solo lo traemos al frente de la silueta de fondo. */
+            [data-testid="stMainBlockContainer"] h1,
+            [data-testid="stMainBlockContainer"] h2,
+            [data-testid="stMainBlockContainer"] h3,
+            [data-testid="stMainBlockContainer"] h4,
+            [data-testid="stMainBlockContainer"] h5,
+            [data-testid="stMainBlockContainer"] p,
+            [data-testid="stMainBlockContainer"] span,
+            [data-testid="stMainBlockContainer"] label {{
+                position: relative;
+                z-index: 1;
+            }}
+            </style>
+            """
+            st.markdown(estilos_fondo_sistema, unsafe_allow_html=True)
+        except FileNotFoundError:
+            st.warning("⚠️ No se encontró la silueta en assets/peru.svg.")
+
+
+    # =========================================================================
+
+
+    # 🌟 DEFINICIÓN DE LAS FUNCIONES MÓDULO
     def mostrar_open_data():
         st.title("📂 Descarga de Datos Abiertos (Open Data)")
         st.write("Bienvenido al portal de Open Data. Aquí puedes obtener los conjuntos de datos limpios y procesados sobre los contaminantes del aire en Lima Metropolitana.")
+   
         st.subheader("🔗 Enlaces Externos Oficiales")
         st.info("Puedes acceder a las fuentes originales y portales oficiales del estado utilizando el siguiente botón:")
+   
         st.link_button(
             "Ir al Portal de Datos Abiertos (Dataset)",
             "https://www.datosabiertos.gob.pe/dataset/monitoreo-de-los-contaminantes-del-aire-en-lima-metropolitana-servicio-nacional-de-0"
         )
 
+
     def mostrar_diccionario():
         st.title("📖 Diccionario de Datos")
         st.write("Explora la estructura lógica, tipos de datos y restricciones de las tablas del sistema.")
+        # 🔗 NUEVO BOTÓN: Enlace externo oficial para el diccionario de datos
         st.subheader("🔗 Enlaces Externos Oficiales")
         st.info("Puedes consultar o descargar la documentación completa del diccionario de datos técnico usando el siguiente botón:")
         st.link_button(
@@ -439,62 +544,93 @@ else:
             "https://www.datosabiertos.gob.pe/dataset/monitoreo-de-los-contaminantes-del-aire-en-lima-metropolitana-servicio-nacional-de-1"
         )
         st.markdown("<br>", unsafe_allow_html=True)
+       
+        # 🖼️ NUEVA SECCIÓN: Mostrar imagen oficial en vez de las tablas de código
         st.subheader("📊 Estructura y Metadatos Oficiales del Dataset")
         try:
+            # Asegúrate de colocar tu imagen 'diccionario_datos.png' dentro de la carpeta 'assets'
             st.image("assets/diccionario_datos.png", caption="Diccionario de Datos Oficial - SENAMHI", use_container_width=True)
         except FileNotFoundError:
             st.error("⚠️ No se pudo cargar la imagen. Verifica que el archivo 'diccionario_datos.png' esté guardado dentro de la carpeta 'assets/'.")
 
+
+    # Asegurar que el entorno principal anule cualquier residuo de capas anteriores
     st.markdown("<style>[data-testid='stVerticalBlock'] > div { max-width: 100% !important; background: transparent !important; box-shadow: none !important; padding: 0px !important; }</style>", unsafe_allow_html=True)
 
+
+    # 1. BARRA LATERAL (SIDEBAR)
     with st.sidebar:
         st.markdown(f"### 👤 Usuario: **{st.session_state.nombre_usuario}**")
         st.divider()
         st.title("Módulos de Software")
+       
         opcion_modulo = option_menu(
             menu_title="Menú General",
             options=[
-                "Panel General", "1. Dashboard Espacial", "2. Dashboard Temporal",
-                "3. Dashboard Horario", "4. Auditoria DataMart", "5. Descargar Open Data",
-                "6. Diccionario de datos", "1. Monitoreo Geográfico (OpenMeteo)",
-                "2. Análisis Estacional y Flujos", "3. Análisis Horario y Tráfico",
-                "4. Nivel Relacional (Spearman)", "5. Nivel Explicativo",
+                "Panel General",
+                # --- FASE 1: DATA CORE ORIGINAL ---
+                "1. Dashboard Espacial",
+                "2. Dashboard Temporal",
+                "3. Dashboard Horario",
+                "4. Auditoria DataMart",
+                 # --- UTILITARIOS DE LA PRIMERA OPEN DATA---
+                "5. Descargar Open Data",
+                "6. Diccionario de datos",
+                # --- FASE 2: BIG DATA & MACHINE LEARNING (OPENMETEO) ---
+                "1. Monitoreo Geográfico (OpenMeteo)",
+                "2. Análisis Estacional y Flujos",
+                "3. Análisis Horario y Tráfico",
+                "4. Nivel Relacional (Spearman)",
+                "5. Nivel Explicativo",
                 "6. Nivel Predictivo (BigQuery ML)",
+
+
             ],
             icons=["house", "geo-alt", "graph-up", "clock", "shield-check", "download", "book"],
             menu_icon="cast",
             default_index=0,
+            # 🎨 ESTILOS PREMIUM CON CONTRASTE Y TARJETAS BLANCAS REALES
             styles={
-                "container": {"padding": "5px 0px", "background-color": "transparent"},
+                "container": {
+                    "padding": "5px 0px",
+                    "background-color": "transparent" # Deja que actúe el fondo base
+                },
                 "nav-link": {
-                    "font-size": "13px", "text-align": "left", "margin": "6px 0px",
-                    "border-radius": "8px",
-                    "background-color": "var(--secondary-background-color)",
-                    "color": "var(--text-color)",
-                    "border": "1px solid rgba(128,128,128,0.25)",
-                    "box-shadow": "0px 2px 4px rgba(0,0,0,0.10)",
-                    "transition": "all 0.2s ease"
+                    "font-size": "13px",
+                    "text-align": "left",
+                    "margin": "6px 0px",              # <-- Separación física real entre botones
+                    "border-radius": "8px",            # <-- Bordes redondeados más visibles
+                    "background-color": "var(--secondary-background-color)",  # <-- Se adapta a claro/oscuro
+                    "color": "var(--text-color)",                             # <-- Texto legible en ambos temas
+                    "border": "1px solid rgba(128,128,128,0.25)",             # <-- Borde sutil en ambos temas
+                    "box-shadow": "0px 2px 4px rgba(0,0,0,0.10)", # <-- SOMBRA REAL sutil para que parezcan tarjetas flotantes
+                    "transition": "all 0.2s ease"      # <-- Animación fluida para el mouse
                 },
                 "nav-link-hover": {
-                    "background-color": "rgba(128,128,128,0.25)",
+                    "background-color": "rgba(128,128,128,0.25)",  # <-- Se nota el cambio en ambos temas
                     "color": "var(--text-color)",
                     "border": "1px solid rgba(128,128,128,0.45)"
                 },
                 "nav-link-selected": {
-                    "background-color": "#66d935",
-                    "color": "#ffffff", 
+                    "background-color": "#66d935",     # <-- Tu color verde cuando está activo
+                    "color": "#ffffff",
                     "font-weight": "bold",
                     "border": "1px solid #4ed01b",
-                    "box-shadow": "0px 4px 10px rgba(102, 217, 53, 0.3)"
+                    "box-shadow": "0px 4px 10px rgba(102, 217, 53, 0.3)" # <-- Sombra verde al estar seleccionado
                 }
             }
+
+
         )
+       
         st.divider()
         if st.button("🚪 Cerrar Sesión", key="btn_logout_sistema_principal", use_container_width=True):
             st.session_state.logueado = False
             st.session_state.nombre_usuario = ""
             st.rerun()
 
+
+    # 2. ENCABEZADO SUPERIOR DEL PANEL PRINCIPAL (Proporciones fijas [1, 3, 1] asignadas)
     col_main_logo1, col_main_titulo, col_main_logo2 = st.columns([1, 3, 1])
     with col_main_logo1:
         st.image("assets/logo_ucv.png", width=130)
@@ -509,14 +645,17 @@ else:
         """, unsafe_allow_html=True)
     with col_main_logo2:
         st.image("assets/logo_senamhi.png", width=110)
-        
+       
     st.markdown("<hr style='border: 1px solid #0284c7; margin-top: 10px; margin-bottom: 20px;'>", unsafe_allow_html=True)
 
+
+    # 3. CONTROL DE VISTAS SEGÚN EL BOTÓN SELECCIONADO (Corregidos para coincidir con tus Options exactamente)
     if opcion_modulo == "Panel General":
         st.markdown("# 🌎 EcoWayraTec: Plataforma de Big Data Analitycs para la contaminación del aire en Lima Metropolitana")
         st.subheader(f"¡Bienvenido/a al Sistema, {st.session_state.nombre_usuario}!")
         st.write("Tu sesión está protegida. Utiliza el menú de la izquierda para navegar por las distintas vistas analíticas del proyecto.")
         st.markdown("<hr style='border: 0.5px solid rgba(128,128,128,0.2); margin-bottom: 25px;'>", unsafe_allow_html=True)
+
 
          # BLOQUE 1: DIAGNÓSTICO DE LA PROBLEMÁTICA Y CONTEXTO
         st.markdown("### 🚨 1. Diagnóstico de la Problemática y Contexto")
@@ -526,7 +665,7 @@ else:
             <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
                 <h4 style='color: #0284c7; margin-top:0;'>🌐 Escenario Mundial (OMS)</h4>
                 <p style='font-size: 14px; text-align: justify;'>
-                Según la Organización Mundial de la Salud, el <b>99% de la población global</b> respira aire que supera los límites de seguridad. 
+                Según la Organización Mundial de la Salud, el <b>99% de la población global</b> respira aire que supera los límites de seguridad.
                 Es el mayor riesgo ambiental para la salud pública actual.
                 </p>
             </div>
@@ -536,7 +675,7 @@ else:
             <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
                 <h4 style='color: #e11d48; margin-top:0;'>🇵🇪 Tasa Nacional (Perú)</h4>
                 <p style='font-size: 14px; text-align: justify;'>
-                Perú suele liderar los rankings de peor calidad de aire en la región. 
+                Perú suele liderar los rankings de peor calidad de aire en la región.
                 Registramos promedios que superan hasta en <b>6 veces</b> los límites saludables recomendados internacionalmente.
                 </p>
             </div>
@@ -546,22 +685,23 @@ else:
             <div style='background: var(--secondary-background-color); padding: 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); height: 260px;'>
                 <h4 style='color: #d97706; margin-top:0;'>🏙️ Situación Regional (Lima)</h4>
                 <p style='font-size: 14px; text-align: justify;'>
-                Lima Metropolitana sufre un "colchón de nubes" por su alta humedad. 
+                Lima Metropolitana sufre un "colchón de nubes" por su alta humedad.
                 Esto atrapa los gases vehiculares a baja altura, convirtiéndola en una de las ciudades más densas en polución.
                 </p>
             </div>
             """, unsafe_allow_html=True)
 
+
         st.markdown("<br>", unsafe_allow_html=True)
         # Recursos visuales del contexto
         col_media1, col_media2 = st.columns([1.2, 1])
-        
+       
         with col_media1:
             # Enlace directo a un video oficial, educativo y libre de plagio de la OPS/OMS
             st.markdown("<p style='font-weight: bold; margin-bottom: 5px;'>🎥 Evidencia Científica Internacional:</p>", unsafe_allow_html=True)
             st.video("https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-")
             st.caption("Video Educativo: El impacto de la contaminación en la salud. Fuente: Organización Panamericana de la Salud (OPS/OMS).")
-        
+       
         with col_media2:
             # 📂 INSTRUCCIÓN DE IMAGEN PARA EL ALUMNO:
             # Busca en Google una foto del cielo gris/smog de Lima, guárdala como 'lima_smog.png' dentro de tu carpeta 'assets/'
@@ -570,29 +710,31 @@ else:
             except FileNotFoundError:
                 # Imagen de respaldo automática si aún no creas la carpeta o el archivo
                 st.image("https://media.istockphoto.com/id/886582700/photo/aerial-view-of-cityscape-of-lima-peru.jpg?s=2048x2048&w=is&k=20&c=dl5FJaXaW3u22JDLvjz1zv1ctLm8U0fRNruIZGF2GG4=", caption="[Respaldo] Contaminación en zonas urbanas densas. (Cámbiala guardando tu foto en assets/lima_smog.png)", use_container_width=True)
-        
+       
         st.markdown("<br><hr style='border: 0.5px solid rgba(128,128,128,0.1);'>", unsafe_allow_html=True)
         # BLOQUE 2: ANÁLISIS DE CONTAMINANTES - PARTE A: PM2.5
         st.markdown("### 📊 2. Matriz de Variables Atmosféricas Monitoreadas")
         st.write("Definición analítica y caracterización biológica de los agentes químicos registrados en el Data Mart:")
 
+
         st.markdown("#### 🟥 A. Material Particulado Fino (PM₂.₅)")
         col_pm25_txt, col_pm25_img = st.columns([1.2, 1])
+
 
         with col_pm25_txt:
             st.markdown("""
             <p style='text-align: justify; font-size: 15px;'>
             <b>🔍 Descubriendo las Fuentes de PM₂.₅: ¿De Dónde Proviene?</b>
             <br>
-            Las partículas PM₂.₅, con un diámetro de 2.5 micrómetros o menos, son aproximadamente <b>30 veces más pequeñas que un cabello humano</b>. 
-            Esto las convierte en una amenaza significativa, aunque a menudo no visible, para la calidad del aire de Lima Metropolitana. 
+            Las partículas PM₂.₅, con un diámetro de 2.5 micrómetros o menos, son aproximadamente <b>30 veces más pequeñas que un cabello humano</b>.
+            Esto las convierte en una amenaza significativa, aunque a menudo no visible, para la calidad del aire de Lima Metropolitana.
             <br><br>
-            Su origen principal proviene de la combustión interna de motores diésel del transporte público, la quema de aceites industriales 
+            Su origen principal proviene de la combustión interna de motores diésel del transporte público, la quema de aceites industriales
             y los procesos de fundición pesada.
             <br><br>
             <b>⚠️ Consecuencias Clínicas Críticas:</b>
             <br>
-            Debido a su escala submicroscópica, burlan con facilidad los filtros biológicos de las fosas nasales. Ingresan directamente a la zona alveolar de los pulmones 
+            Debido a su escala submicroscópica, burlan con facilidad los filtros biológicos de las fosas nasales. Ingresan directamente a la zona alveolar de los pulmones
             y se filtran al torrente sanguíneo. Esto incrementa de forma exponencial los casos de infartos cardíacos, accidentes cerebrovasculares (ACV) y mutaciones celulares que derivan en cáncer pulmonar.
             </p>
             """, unsafe_allow_html=True)
@@ -605,7 +747,7 @@ else:
             except FileNotFoundError:
                 # Imagen de respaldo educativa de la PUCP sobre contaminación de PM2.5 en Lima por distritos
                 st.image("https://files.pucp.education/puntoedu/wp-content/uploads/2024/04/17181908/graficas-contaminacion-aire-1-1-1024x907.jpg", caption="[Respaldo] Concentración de PM2.5 por distritos en Lima. (Cámbiala guardando tu gráfico en assets/mortalidad_aqi.png)", use_container_width=True)
-        
+       
         st.markdown("<br>", unsafe_allow_html=True)
         # BLOQUE 3: ANÁLISIS DE CONTAMINANTES - PARTE B: PM10 Y NO2
         col_pm10, col_no2 = st.columns(2)
@@ -622,7 +764,7 @@ else:
                 </p>
             </div>
             """, unsafe_allow_html=True)
-        
+       
         with col_no2:
             st.markdown("""
             <div style='background-color: rgba(59, 130, 246, 0.06); padding: 22px; border-radius: 12px; border-left: 5px solid #3b82f6; height: 350px;'>
@@ -638,16 +780,18 @@ else:
             """, unsafe_allow_html=True)
         st.markdown("<br><hr style='border: 0.5px solid rgba(128,128,128,0.1);'>", unsafe_allow_html=True)
 
+
         # BLOQUE 4: ARQUITECTURA Y ENFOQUE TECNOLÓGICO
         st.markdown("### 🛠️ 3. Infraestructura de Big Data Analytics y Ciencia de Datos")
         st.markdown("""
         <p style='text-align: justify; font-size: 15px;'>
-        Para resolver la dispersión de los datos abiertos y la ineficiencia de procesar archivos planos manuales (CSV), 
+        Para resolver la dispersión de los datos abiertos y la ineficiencia de procesar archivos planos manuales (CSV),
         nuestro ecosistema implementa una solución de software estructurada en tres capas analíticas de alto rendimiento:
         </p>
         """, unsafe_allow_html=True)
-        
+       
         col_tec1, col_tec2 = st.columns([1.2, 1])
+
 
         with col_tec1:
             st.markdown("""
@@ -658,18 +802,21 @@ else:
             </ul>
             """, unsafe_allow_html=True)
 
+
         with col_tec2:
             # 📂 INSTRUCCIÓN: Guarda esta imagen de la arquitectura híbrida en tu carpeta assets/ con el nombre exacto de 'arquitectura_cloud.png'
             st.image(
-                "assets/arquitectura_cloud.png", 
-                caption="Arquitectura de Big Data Cloud para la implementación del Software de analítica ambiental.", 
+                "assets/arquitectura_cloud.png",
+                caption="Arquitectura de Big Data Cloud para la implementación del Software de analítica ambiental.",
                 use_container_width=True
             )
-        
+       
         st.markdown("<br>", unsafe_allow_html=True)
         st.info("💡 **Impacto Estratégico:** Al unificar el análisis macro, la clasificación química " \
         "de contaminantes y las predicciones algorítmicas, este software provee un marco científico robusto " \
         "indispensable para el diseño de políticas urbanas basadas en datos.")
+
+
 
 
     #modulo1
@@ -677,47 +824,66 @@ else:
         st.markdown("### 📍 ESTADO ACTUAL Y MONITOREO GEOGRÁFICO")
         url_espacial = "https://datastudio.google.com/embed/reporting/334f6c3b-644d-4248-9e3b-3b4d99fbcf5b/page/tEnnC"
         st.iframe(src=url_espacial, height=720)
-    
+   
     elif opcion_modulo == "2. Dashboard Temporal":
         st.markdown("### 📈 COMPORTAMIENTO TEMPORAL Y TENDENCIAS PLURIANUALES")
         url_temporal = "https://datastudio.google.com/embed/reporting/5e8fa082-d136-422c-94d5-5f28af5d2684/page/p_460lbbvu4d"
         st.iframe(src=url_temporal, height=720)
-    
+   
     elif opcion_modulo == "3. Dashboard Horario":
         st.markdown("### ⏰ ANÁLISIS HORARIO Y PUNTOS CRÍTICOS DIARIOS")
         url_horario = "https://datastudio.google.com/embed/reporting/d132cb53-3ccb-4842-977d-4369ae830efd/page/p_45rs0cvu4d"
         st.iframe(src=url_horario, height=720)
+
 
     elif opcion_modulo == "4. Auditoria DataMart":
         st.markdown("### 🛡️ AUDITORÍA DE ALERTAS Y CONTROL DE SENSORES")
         url_auditoria = "https://datastudio.google.com/embed/reporting/e2bca74c-7dea-486a-9360-6d73b8977768/page/p_pgd07cvu4d"
         st.iframe(src=url_auditoria, height=720)
 
+
     elif opcion_modulo == "5. Descargar Open Data":
         mostrar_open_data()
-        
+       
     elif opcion_modulo == "6. Diccionario de datos":
         mostrar_diccionario()
+        # =====================================================================
+        # 🔬 CONTROL DE VISTAS PARA LA FASE 2 (OPENMETEO & DATA SCIENCE)
+        # =====================================================================
     elif opcion_modulo == "1. Monitoreo Geográfico (OpenMeteo)":
         st.markdown("### 📍 FASE 2: MONITOREO GEOGRÁFICO Y ESTADO ACTUAL")
+        # Pon aquí tu enlace de Looker de la Página 1 de tu nueva tarea:
         st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/wej2F", height=720)
+
 
     elif opcion_modulo == "2. Análisis Estacional y Flujos":
         st.markdown("### 📈 FASE 2: ANÁLISIS ESTACIONAL Y FLUJOS (SANKEY)")
+        # Pon aquí tu enlace de Looker de la Página 2 de tu nueva tarea:
         st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/p_n470liy44d", height=720)
+
 
     elif opcion_modulo == "3. Análisis Horario y Tráfico":
         st.markdown("### ⏰ FASE 2: ANÁLISIS HORARIO Y PATRONES DE TRÁFICO")
+        # Pon aquí tu enlace de Looker de la Página 3 de tu nueva tarea:
         st.iframe(src="https://datastudio.google.com/embed/reporting/d9610564-7237-48f7-96f1-792655de36c9/page/p_02gfqv444d", height=720)
+
 
     elif opcion_modulo == "4. Nivel Relacional (Spearman)":
         st.markdown("### 🔗 FASE 2: NIVEL RELACIONAL - IMPACTO GEOGRÁFICO")
+        # Pon aquí tu enlace de Looker del Gráfico de Dispersión de Spearman:
         st.iframe(src="https://datastudio.google.com/embed/reporting/f787c40c-c07b-45e5-b4d8-3878e37643d7/page/tEnnC", height=720)
+
 
     elif opcion_modulo == "5. Nivel Explicativo":
         st.markdown("### 🔍 FASE 2: Nivel Explicativo: Modelo de Regresión Lineal")
+        # Pon aquí tu enlace de Looker de la Regresión Logística (Barras Azules/Naranjas):
         st.iframe(src="https://datastudio.google.com/embed/reporting/55c3799a-1d32-4445-b49f-7b2d035de0b1/page/tEnnC", height=720)
+
 
     elif opcion_modulo == "6. Nivel Predictivo (BigQuery ML)":
         st.markdown("### 🔮 FASE 2: NIVEL PREDICTIVO - MACHINE LEARNING ARIMA_PLUS")
+        # Pon aquí tu enlace de Looker del Pronóstico con Bandas de Error:
         st.iframe(src="https://datastudio.google.com/embed/reporting/5eb59328-b988-4560-8a7f-c8a943f78cba/page/tEnnC", height=720)
+
+
+
