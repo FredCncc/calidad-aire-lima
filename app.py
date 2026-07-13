@@ -757,13 +757,21 @@ img{
 
         st.markdown("<br>", unsafe_allow_html=True)
         # Recursos visuales del contexto
-        col_media1, col_media2 = st.columns([1.2, 1])
-       
+        col_media1, col_media2 = st.columns(
+            [1.2, 1],
+            gap="large"
+        )         
         with col_media1:
-            # Enlace directo a un video oficial, educativo y libre de plagio de la OPS/OMS
-            st.markdown("<p style='font-weight: bold; margin-bottom: 5px;'>🎥 Evidencia Científica Internacional:</p>", unsafe_allow_html=True)
-            st.video("https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-")
-            st.caption("Video Educativo: El impacto de la contaminación en la salud. Fuente: Organización Panamericana de la Salud (OPS/OMS).")
+
+             st.markdown("#### 🎥 Evidencia Científica Internacional")
+
+             st.video(
+                 "https://youtu.be/JAy9sCf-C5Q?si=sF-qJ7rtKdqEyrm-"
+             )
+
+             st.caption(
+             "Fuente: Organización Panamericana de la Salud (OPS/OMS)"
+             )
        
         with col_media2:
             # 📂 INSTRUCCIÓN DE IMAGEN PARA EL ALUMNO:
