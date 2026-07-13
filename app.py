@@ -876,7 +876,7 @@ img{
             # 📂 INSTRUCCIÓN: Guarda esta imagen de la arquitectura híbrida en tu carpeta assets/ con el nombre exacto de 'arquitectura_cloud.png'
             st.image(
                 "assets/arquitectura_cloud.png",
-                caption="Arquitectura de Big Data Cloud para la implementación del Software de analítica ambiental.",
+                caption="Arquitectura de Big Data Cloud para la implementación del Software de analítica ambiental. Nota: Propia",
                 use_container_width=True
             )
        
