@@ -664,11 +664,12 @@ else:
 /* Titulos responsivos */
 .titulo-principal{
     font-size:clamp(1.8rem,3vw,3rem);
-    font-weight:700;
+    font-weight:800;
 }
 
 .subtitulo-panel{
     font-size:clamp(1rem,1.4vw,1.3rem);
+     font-weight:800;
 }
 
 /* Texto */
