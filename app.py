@@ -126,6 +126,16 @@ if not st.session_state.logueado:
     if "mostrando_formulario" not in st.session_state:
         st.session_state.mostrando_formulario = False
 
+    try:
+        
+        img_bienvenida = obtener_imagen_base64("assets/fondo.png")
+        img_fondo_login = obtener_imagen_base64("assets/limanoche.png")
+        img_bienvenida = obtener_imagen_base64("assets/fondo_inicio.png")
+        img_fondo_login = obtener_imagen_base64("assets/limanoche_smog.png")
+    except FileNotFoundError:
+        st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
+        st.stop()
+
 
 
         # --- SUB-PANTALLA A: PRESENTACIÓN PRINCIPAL DE ECOWAYRATEC (BOTÓN SUPERIOR INDEPENDIENTE) ---
