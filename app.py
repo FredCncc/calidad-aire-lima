@@ -128,10 +128,10 @@ if not st.session_state.logueado:
 
     try:
         
-        img_bienvenida = obtener_imagen_base64("assets/fondo.png")
+        img_bienvenida = obtener_imagen_base64("assets/fondo_inicio.png")
         img_fondo_login = obtener_imagen_base64("assets/limanoche.png")
         img_bienvenida = obtener_imagen_base64("assets/fondo_inicio.png")
-        img_fondo_login = obtener_imagen_base64("assets/limanoche_smog.png")
+        img_fondo_login = obtener_imagen_base64("assets/limanoche.png")
     except FileNotFoundError:
         st.error("⚠️ Error: Verifica que las imágenes se llamen 'fondo.png' y 'limanoche.png' dentro de la carpeta assets.")
         st.stop()
